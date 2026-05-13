@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(keytool -exportcert -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android)",
+      "Bash(openssl sha1 *)",
+      "Bash(awk '{print toupper\\($2\\)}')",
+      "Bash(xargs cat -n)",
+      "Bash(docker exec *)",
+      "Bash(chmod +x /Users/andrea/Desktop/Java/finance_tracker/build.sh /Users/andrea/Desktop/Java/finance_tracker/deploy.sh)",
+      "Bash(find /Users/andrea -name \"nginx.conf\" 2>/dev/null | grep -v \".git\" ; echo \"DONE\")",
+      "Bash(xargs ls -la)"
+    ]
+  }
+}

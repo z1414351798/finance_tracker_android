@@ -18,6 +18,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
 import com.z.financetracker.client.NetworkClient
 import com.z.financetracker.component.DatePickerField
+import com.z.financetracker.component.ToastHost
+import com.z.financetracker.component.rememberToastState
 import com.z.financetracker.entity.SavingsGoal
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -37,7 +39,7 @@ fun GoalsScreen() {
     var showAddDialog by remember { mutableStateOf(false) }
     var contributeTarget by remember { mutableStateOf<SavingsGoal?>(null) }
     var editTarget by remember { mutableStateOf<SavingsGoal?>(null) }
-    val snackbar = remember { SnackbarHostState() }
+    val toast = rememberToastState()
 
     fun load() {
         scope.launch {
@@ -45,6 +47,8 @@ fun GoalsScreen() {
             try {
                 val resp = NetworkClient.getGoalApi(context).getGoals()
                 if (resp.isSuccessful) goals = resp.body() ?: emptyList()
+            } catch (_: Exception) {
+                // server unreachable or network error — stay on screen with empty data
             } finally {
                 isLoading = false
             }
@@ -54,7 +58,6 @@ fun GoalsScreen() {
     LaunchedEffect(Unit) { load() }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbar) },
         containerColor = Color(0xFFF8FAFC)
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) {
@@ -173,6 +176,7 @@ fun GoalsScreen() {
                                 scope.launch {
                                     NetworkClient.getGoalApi(context).deleteGoal(goal.id)
                                     load()
+                                    scope.launch { toast.showDelete("Goal deleted") }
                                 }
                             }
                         )
@@ -181,6 +185,7 @@ fun GoalsScreen() {
                     item { Spacer(Modifier.height(80.dp)) }
                 }
             }
+            ToastHost(toast)
         }
     }
 
@@ -195,6 +200,7 @@ fun GoalsScreen() {
                     if (resp.isSuccessful) {
                         showAddDialog = false
                         load()
+                        scope.launch { toast.showSuccess("Goal created!") }
                     }
                 }
             }
@@ -211,6 +217,7 @@ fun GoalsScreen() {
                     if (resp.isSuccessful) {
                         editTarget = null
                         load()
+                        scope.launch { toast.showSuccess("Goal updated!") }
                     }
                 }
             }
@@ -228,7 +235,7 @@ fun GoalsScreen() {
                     if (resp.isSuccessful) {
                         contributeTarget = null
                         load()
-                        snackbar.showSnackbar("Added ${fmtGoal(amount)} to ${goal.name}!")
+                        scope.launch { toast.showSuccess("Added ${fmtGoal(amount)} to ${goal.name}!") }
                     }
                 }
             }

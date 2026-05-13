@@ -10,5 +10,7 @@ data class Transaction(
     val type: TraType,
     val categoryId: Long,
     val categoryName: String? = null, // ← ADD THIS (backend JOIN returns it)
-    val date: String
+    val date: String,
+    val imageUrl: String? = null,      // ← add this
+    val imagePresignedUrl: String? = null
 )

@@ -12,4 +12,7 @@ interface AuthService {
 
     @POST("api/auth/login")
     suspend fun login(@Body user: User): Response<AuthResponse>
+
+    @POST("api/auth/google")
+    suspend fun googleLogin(@Body body: Map<String, String>): Response<AuthResponse>
 }

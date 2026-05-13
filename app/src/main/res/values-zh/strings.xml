@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">财务追踪</string>
+
+    <!-- Navigation -->
+    <string name="home">首页</string>
+    <string name="transactions">交易记录</string>
+    <string name="analytics">分析</string>
+    <string name="profile">我的</string>
+
+    <!-- Common -->
+    <string name="income">收入</string>
+    <string name="expense">支出</string>
+    <string name="save">保存</string>
+    <string name="cancel">取消</string>
+    <string name="delete">删除</string>
+    <string name="edit">编辑</string>
+    <string name="add">添加</string>
+    <string name="all">全部</string>
+    <string name="logout">退出登录</string>
+    <string name="language">语言</string>
+    <string name="budget">预算</string>
+    <string name="goals">储蓄目标</string>
+    <string name="ai_advisor">AI顾问</string>
+    <string name="add_record">添加记录</string>
+    <string name="history">历史记录</string>
+    <string name="search">搜索</string>
+    <string name="filter">筛选</string>
+    <string name="apply_filters">应用筛选</string>
+    <string name="clear_all">清除全部</string>
+    <string name="no_transactions">暂无交易记录</string>
+    <string name="load_more">加载更多</string>
+    <string name="total_balance">总余额</string>
+    <string name="savings_rate">储蓄率</string>
+    <string name="login">登录</string>
+    <string name="signup">注册</string>
+    <string name="username">用户名</string>
+    <string name="password">密码</string>
+    <string name="email">邮箱</string>
+    <string name="profile_info">个人资料</string>
+    <string name="not_set">未设置</string>
+    <string name="record_saved">记录已保存！</string>
+
+    <!-- Record Screen -->
+    <string name="transaction_name_hint">交易名称（例如：午餐）</string>
+    <string name="amount_label">金额</string>
+    <string name="note_optional">备注（可选）</string>
+    <string name="select_category">选择分类：</string>
+    <string name="add_new_category">+ 添加新分类</string>
+    <string name="receipt_photo_optional">收据 / 照片（可选）</string>
+    <string name="tap_attach_receipt">点击附加收据照片</string>
+    <string name="stored_privately">存储在您的账户中</string>
+    <string name="tap_to_view">点击查看</string>
+    <string name="tap_anywhere_close">点击任意处关闭</string>
+    <string name="new_category">新分类</string>
+    <string name="category_name">分类名称</string>
+
+    <!-- History Screen -->
+    <string name="search_by_name">按名称搜索…</string>
+    <string name="type_label">类型</string>
+    <string name="date_label">日期</string>
+    <string name="date_range">日期范围</string>
+    <string name="from_date">开始日期</string>
+    <string name="to_date">结束日期</string>
+    <string name="clear_dates">清除日期</string>
+    <string name="amount_range">金额范围</string>
+    <string name="min_amount">最小值</string>
+    <string name="max_amount">最大值</string>
+    <string name="note_label">备注</string>
+    <string name="search_in_notes">在备注中搜索…</string>
+    <string name="category_label">分类</string>
+    <string name="clear_filters">清除筛选</string>
+    <string name="any_date">任意</string>
+    <string name="note_chip">备注：%s</string>
+    <string name="transactions_count">%d 条记录</string>
+    <string name="edit_transaction">编辑交易</string>
+    <string name="transaction_name">交易名称</string>
+    <string name="note_optional_label">备注（可选）</string>
+    <string name="save_changes">保存更改</string>
+    <string name="delete_transaction">删除交易？</string>
+    <string name="transaction_updated">交易已更新</string>
+    <string name="transaction_deleted">交易已删除</string>
+    <string name="update_failed">更新失败</string>
+    <string name="delete_failed">删除失败</string>
+
+    <!-- Profile Screen -->
+    <string name="save_changes_profile">保存更改</string>
+    <string name="change_password">修改密码</string>
+    <string name="current_password">当前密码</string>
+    <string name="new_password">新密码</string>
+    <string name="confirm_new_password">确认新密码</string>
+    <string name="passwords_dont_match">密码不匹配</string>
+    <string name="password_too_short">密码至少需要6个字符</string>
+    <string name="update_password">更新密码</string>
+    <string name="profile_updated">个人资料已更新！</string>
+    <string name="upload_failed">上传失败，请重试。</string>
+    <string name="password_changed">密码修改成功！</string>
+    <string name="wrong_current_password">当前密码不正确</string>
+    <string name="failed_change_password">密码修改失败</string>
+    <string name="log_out">退出登录</string>
+    <string name="strength_strong">强</string>
+    <string name="strength_medium">中</string>
+    <string name="strength_weak">弱</string>
+    <string name="strength_too_short">太短</string>
+
+    <!-- Home Screen -->
+    <string name="thirty_day_trend">30天趋势</string>
+    <string name="expense_breakdown">支出分类</string>
+    <string name="recent_transactions">最近交易</string>
+    <string name="view_all">查看全部 →</string>
+    <string name="no_recent_transactions">暂无最近交易</string>
+    <string name="upcoming_bills">即将到期的账单</string>
+</resources>

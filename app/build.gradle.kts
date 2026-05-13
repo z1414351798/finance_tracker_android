@@ -45,13 +45,25 @@ android {
     flavorDimensions += "env"
 
     productFlavors {
+        // Android emulator only — maps 10.0.2.2 → your Mac's localhost
         create("local") {
             dimension = "env"
-            buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:8080/\"")
+            buildConfigField("String", "BASE_URL", "\"http://10.0.2.2/\"")
         }
-        create("remote") {
+        // Real phone testing — use wifi test
+        create("wifi") {
+            dimension = "env"
+            buildConfigField("String", "BASE_URL", "\"http://10.172.9.160/\"")
+        }
+        // Real phone testing — ngrok tunnels your Mac's backend over HTTPS
+        create("ngrok") {
             dimension = "env"
             buildConfigField("String", "BASE_URL", "\"https://nontoxically-unhumiliating-shoshana.ngrok-free.dev/\"")
+        }
+        // Production server — your VPS with nginx + Let's Encrypt
+        create("prod") {
+            dimension = "env"
+            buildConfigField("String", "BASE_URL", "\"https://yourdomain.com/\"")
         }
     }
 }
@@ -81,6 +93,12 @@ dependencies {
 
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
+
+    implementation("androidx.appcompat:appcompat:1.7.0")
+
+    implementation("androidx.credentials:credentials:1.3.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

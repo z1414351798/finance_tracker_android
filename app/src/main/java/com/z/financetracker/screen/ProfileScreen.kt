@@ -11,18 +11,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.*
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.z.financetracker.R
 import com.z.financetracker.client.NetworkClient
+import com.z.financetracker.component.LanguageSwitcher
 import com.z.financetracker.entity.User
 import com.z.financetracker.util.TokenManager
 import kotlinx.coroutines.launch
@@ -56,6 +60,15 @@ fun ProfileScreen(onLogout: () -> Unit) {
 
     // Snackbar
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val msgProfileUpdated     = stringResource(R.string.profile_updated)
+    val msgUploadFailed       = stringResource(R.string.upload_failed)
+    val msgUpdateFailed       = stringResource(R.string.update_failed)
+    val msgPasswordChanged    = stringResource(R.string.password_changed)
+    val msgWrongPassword      = stringResource(R.string.wrong_current_password)
+    val msgFailedChangePw     = stringResource(R.string.failed_change_password)
+    val msgPasswordsDontMatch = stringResource(R.string.passwords_dont_match)
+    val msgPasswordTooShort   = stringResource(R.string.password_too_short)
 
     fun showMsg(msg: String) {
         scope.launch { snackbarHostState.showSnackbar(msg) }
@@ -96,10 +109,11 @@ fun ProfileScreen(onLogout: () -> Unit) {
                 val resp = NetworkClient.getProfileApi(context).uploadAvatar(part)
                 if (resp.isSuccessful) {
                     val newUrl = resp.body()?.get("profileImageUrl")
+                    // ← newUrl is already full MinIO URL, use directly
                     user = user?.copy(profileImageUrl = newUrl)
-                    showMsg("Profile photo updated!")
+                    showMsg(msgProfileUpdated)
                 } else {
-                    showMsg("Upload failed. Try again.")
+                    showMsg(msgUploadFailed)
                 }
             } catch (e: Exception) {
                 showMsg("Error: ${e.message}")
@@ -149,11 +163,11 @@ fun ProfileScreen(onLogout: () -> Unit) {
                                 .border(3.dp, Color.White.copy(alpha = 0.5f), CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
-                            val imageUrl = user?.profileImageUrl
-                            if (imageUrl != null) {
+                            if (user?.profileImageUrl != null) {
                                 AsyncImage(
                                     model = ImageRequest.Builder(context)
-                                        .data("http://10.0.2.2:8080$imageUrl")
+                                        // Authenticated proxy — bucket is private
+                                        .data(user!!.presignedImageUrl)
                                         .crossfade(true)
                                         .build(),
                                     contentDescription = "Profile photo",
@@ -239,13 +253,13 @@ fun ProfileScreen(onLogout: () -> Unit) {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Profile Info", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Text(stringResource(R.string.profile_info), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                         TextButton(onClick = {
                             isEditingProfile = !isEditingProfile
                             if (!isEditingProfile) editEmail = user?.email ?: ""
                         }) {
                             Text(
-                                if (isEditingProfile) "Cancel" else "Edit",
+                                if (isEditingProfile) stringResource(R.string.cancel) else stringResource(R.string.edit),
                                 color = Color(0xFF2563EB),
                                 fontWeight = FontWeight.SemiBold
                             )
@@ -256,7 +270,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
 
                     // Username (read-only)
                     ProfileField(
-                        label = "Username",
+                        label = stringResource(R.string.username),
                         value = user?.username ?: "",
                         icon = Icons.Default.Person,
                         readOnly = true
@@ -270,7 +284,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
                             OutlinedTextField(
                                 value = editEmail,
                                 onValueChange = { editEmail = it },
-                                label = { Text("Email") },
+                                label = { Text(stringResource(R.string.email)) },
                                 leadingIcon = {
                                     Icon(Icons.Default.Email, null, tint = Color(0xFF2563EB))
                                 },
@@ -284,8 +298,8 @@ fun ProfileScreen(onLogout: () -> Unit) {
                             )
                         } else {
                             ProfileField(
-                                label = "Email",
-                                value = user?.email?.ifBlank { "Not set" } ?: "Not set",
+                                label = stringResource(R.string.email),
+                                value = user?.email?.ifBlank { stringResource(R.string.not_set) } ?: stringResource(R.string.not_set),
                                 icon = Icons.Default.Email,
                                 readOnly = true
                             )
@@ -305,9 +319,9 @@ fun ProfileScreen(onLogout: () -> Unit) {
                                             if (resp.isSuccessful) {
                                                 user = resp.body()
                                                 isEditingProfile = false
-                                                showMsg("Profile updated!")
+                                                showMsg(msgProfileUpdated)
                                             } else {
-                                                showMsg("Update failed")
+                                                showMsg(msgUpdateFailed)
                                             }
                                         } finally {
                                             isSavingProfile = false
@@ -328,11 +342,54 @@ fun ProfileScreen(onLogout: () -> Unit) {
                                         strokeWidth = 2.dp
                                     )
                                 } else {
-                                    Text("Save Changes", fontWeight = FontWeight.SemiBold)
+                                    Text(stringResource(R.string.save_changes_profile), fontWeight = FontWeight.SemiBold)
                                 }
                             }
                         }
                     }
+                }
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            // ── Language Card ──────────────────────────────────────
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(4.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .background(Color(0xFFEFF6FF), RoundedCornerShape(10.dp)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                Icons.Default.Language,
+                                null,
+                                tint = Color(0xFF2563EB),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                        Spacer(Modifier.width(14.dp))
+                        Text(
+                            stringResource(R.string.language),
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 15.sp
+                        )
+                    }
+                    LanguageSwitcher()
                 }
             }
 
@@ -363,7 +420,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
                                 modifier = Modifier.size(20.dp)
                             )
                             Spacer(Modifier.width(10.dp))
-                            Text("Change Password", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                            Text(stringResource(R.string.change_password), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                         }
                         Icon(
                             if (showPasswordSection) Icons.Default.KeyboardArrowUp
@@ -380,7 +437,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
                             PasswordField(
                                 value = currentPassword,
                                 onValueChange = { currentPassword = it },
-                                label = "Current Password",
+                                label = stringResource(R.string.current_password),
                                 showPassword = showCurrentPw,
                                 onToggleShow = { showCurrentPw = !showCurrentPw }
                             )
@@ -390,7 +447,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
                             PasswordField(
                                 value = newPassword,
                                 onValueChange = { newPassword = it },
-                                label = "New Password",
+                                label = stringResource(R.string.new_password),
                                 showPassword = showNewPw,
                                 onToggleShow = { showNewPw = !showNewPw }
                             )
@@ -400,7 +457,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
                             PasswordField(
                                 value = confirmPassword,
                                 onValueChange = { confirmPassword = it },
-                                label = "Confirm New Password",
+                                label = stringResource(R.string.confirm_new_password),
                                 showPassword = showNewPw,
                                 onToggleShow = { showNewPw = !showNewPw },
                                 isError = confirmPassword.isNotEmpty() && confirmPassword != newPassword
@@ -408,7 +465,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
 
                             if (confirmPassword.isNotEmpty() && confirmPassword != newPassword) {
                                 Text(
-                                    "Passwords don't match",
+                                    stringResource(R.string.passwords_dont_match),
                                     color = Color(0xFFDC2626),
                                     fontSize = 12.sp,
                                     modifier = Modifier.padding(start = 4.dp, top = 2.dp)
@@ -426,11 +483,11 @@ fun ProfileScreen(onLogout: () -> Unit) {
                             Button(
                                 onClick = {
                                     if (newPassword != confirmPassword) {
-                                        showMsg("Passwords don't match")
+                                        showMsg(msgPasswordsDontMatch)
                                         return@Button
                                     }
                                     if (newPassword.length < 6) {
-                                        showMsg("Password must be at least 6 characters")
+                                        showMsg(msgPasswordTooShort)
                                         return@Button
                                     }
                                     scope.launch {
@@ -449,10 +506,10 @@ fun ProfileScreen(onLogout: () -> Unit) {
                                                     newPassword = ""
                                                     confirmPassword = ""
                                                     showPasswordSection = false
-                                                    showMsg("Password changed successfully!")
+                                                    showMsg(msgPasswordChanged)
                                                 }
-                                                403 -> showMsg("Current password is incorrect")
-                                                else -> showMsg("Failed to change password")
+                                                403 -> showMsg(msgWrongPassword)
+                                                else -> showMsg(msgFailedChangePw)
                                             }
                                         } finally {
                                             isSavingPassword = false
@@ -474,7 +531,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
                                         strokeWidth = 2.dp
                                     )
                                 } else {
-                                    Text("Update Password", fontWeight = FontWeight.SemiBold)
+                                    Text(stringResource(R.string.update_password), fontWeight = FontWeight.SemiBold)
                                 }
                             }
                         }
@@ -518,7 +575,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
                     }
                     Spacer(Modifier.width(14.dp))
                     Text(
-                        "Log Out",
+                        stringResource(R.string.log_out),
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 15.sp,
                         color = Color(0xFFDC2626)
@@ -610,10 +667,10 @@ private fun PasswordStrengthBar(password: String) {
         else -> 0
     }
     val (label, color) = when (strength) {
-        3 -> "Strong" to Color(0xFF059669)
-        2 -> "Medium" to Color(0xFFF59E0B)
-        1 -> "Weak" to Color(0xFFEF4444)
-        else -> "Too short" to Color(0xFFD1D5DB)
+        3 -> stringResource(R.string.strength_strong) to Color(0xFF059669)
+        2 -> stringResource(R.string.strength_medium) to Color(0xFFF59E0B)
+        1 -> stringResource(R.string.strength_weak) to Color(0xFFEF4444)
+        else -> stringResource(R.string.strength_too_short) to Color(0xFFD1D5DB)
     }
 
     Column {

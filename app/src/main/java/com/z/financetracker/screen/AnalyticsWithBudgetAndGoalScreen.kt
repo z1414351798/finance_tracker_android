@@ -2,7 +2,9 @@ package com.z.financetracker.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -25,18 +27,22 @@ fun AnalyticsWithBudgetAndGoalScreen() {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
                     .padding(horizontal = 16.dp, vertical = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 listOf(
                     "analytics" to "Analytics",
                     "budget"    to "Budget",
-                    "goals"     to "Goals"
+                    "goals"     to "Goals",
+                    "calendar"  to "Calendar",
+                    "report"    to "Report",
+                    "recurring" to "Recurring"
                 ).forEach { (key, label) ->
                     InnerTab(
                         label = label,
                         selected = selectedTab == key,
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.width(100.dp),
                         onClick = { selectedTab = key }
                     )
                 }
@@ -48,6 +54,9 @@ fun AnalyticsWithBudgetAndGoalScreen() {
                 "analytics" -> AnalyticsScreen()
                 "budget"    -> BudgetScreen()
                 "goals"     -> GoalsScreen()
+                "calendar"  -> SpendingCalendarScreen()
+                "report"    -> MonthlyReportScreen()
+                "recurring" -> RecurringScreen()
             }
         }
     }

@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.*
+import androidx.compose.foundation.clickable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -30,14 +31,22 @@ import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.z.financetracker.api.CashFlow
 import com.z.financetracker.api.SummaryResponse
 import com.z.financetracker.client.NetworkClient
+import com.z.financetracker.component.AnimatedCounter
+import com.z.financetracker.component.AnimatedProgressBar
+import com.z.financetracker.component.FadeSlideIn
+import com.z.financetracker.component.ShimmerCard
+import com.z.financetracker.component.StaggeredItem
 import com.z.financetracker.entity.DailyTrend
+import com.z.financetracker.entity.RecurringTransaction
 import com.z.financetracker.entity.Transaction
 import java.text.NumberFormat
 import java.util.Locale
 import kotlinx.coroutines.launch
+import androidx.compose.ui.res.stringResource
+import com.z.financetracker.R
 
 @Composable
-fun SkylineScreen() {
+fun SkylineScreen(onAddRecord: () -> Unit = {}) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
@@ -45,6 +54,7 @@ fun SkylineScreen() {
     var summary by remember { mutableStateOf<SummaryResponse?>(null) }
     var dailyTrends by remember { mutableStateOf<List<DailyTrend>>(emptyList()) }
     var recentTransactions by remember { mutableStateOf<List<Transaction>>(emptyList()) }
+    var upcomingBills by remember { mutableStateOf<List<RecurringTransaction>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
 
     fun load() {
@@ -58,6 +68,11 @@ fun SkylineScreen() {
 
                 val historyResp = NetworkClient.getTransactionApi(context).getHistory(0, 5)
                 if (historyResp.isSuccessful) recentTransactions = historyResp.body()?.content ?: emptyList()
+
+                val billsResp = NetworkClient.getRecurringApi(context).getUpcoming(7)
+                if (billsResp.isSuccessful) upcomingBills = billsResp.body() ?: emptyList()
+            } catch (_: Exception) {
+                // server unreachable or network error — stay on screen with empty data
             } finally {
                 isLoading = false
             }
@@ -67,8 +82,18 @@ fun SkylineScreen() {
     LaunchedEffect(Unit) { load() }
 
     if (isLoading) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator(color = Color(0xFF2563EB))
+        // Shimmer skeleton while loading
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFF8FAFC))
+                .verticalScroll(rememberScrollState())
+        ) {
+            ShimmerCard(modifier = Modifier.height(160.dp).padding(0.dp))
+            Spacer(Modifier.height(16.dp))
+            ShimmerCard(modifier = Modifier.padding(horizontal = 16.dp))
+            Spacer(Modifier.height(16.dp))
+            ShimmerCard(modifier = Modifier.padding(horizontal = 16.dp))
         }
         return
     }
@@ -96,33 +121,110 @@ fun SkylineScreen() {
         ) {
             Column {
                 Text(
-                    "Total Balance",
+                    stringResource(R.string.total_balance),
                     color = Color.White.copy(alpha = 0.8f),
                     fontSize = 14.sp
                 )
                 Spacer(Modifier.height(4.dp))
-                Text(
-                    formatCurrency(balance),
-                    color = Color.White,
-                    fontSize = 36.sp,
-                    fontWeight = FontWeight.Black
-                )
+                AnimatedCounter(value = balance) { displayed ->
+                    Text(
+                        formatCurrency(displayed),
+                        color = Color.White,
+                        fontSize = 36.sp,
+                        fontWeight = FontWeight.Black
+                    )
+                }
                 Spacer(Modifier.height(24.dp))
                 Row(Modifier.fillMaxWidth()) {
                     SummaryChip(
-                        label = "Income",
+                        label = stringResource(R.string.income),
                         amount = totalIncome,
                         color = Color(0xFF34D399),
                         modifier = Modifier.weight(1f)
                     )
                     Spacer(Modifier.width(16.dp))
                     SummaryChip(
-                        label = "Expense",
+                        label = stringResource(R.string.expense),
                         amount = totalExpense,
                         color = Color(0xFFFCA5A5),
                         modifier = Modifier.weight(1f)
                     )
                 }
+                Spacer(Modifier.height(16.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White.copy(alpha = 0.18f), RoundedCornerShape(14.dp))
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+                        ) { onAddRecord() }
+                        .padding(vertical = 13.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Add,
+                            contentDescription = "Add record",
+                            tint = Color.White,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Text(
+                            stringResource(R.string.add_record),
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
+        }
+
+        // ── Upcoming bills banner ──────────────────────────────────
+        if (upcomingBills.isNotEmpty()) {
+            val totalDue = upcomingBills.sumOf { it.amount }
+            val overdueCount = upcomingBills.count {
+                runCatching {
+                    java.time.LocalDate.parse(it.nextDueDate)
+                        .isBefore(java.time.LocalDate.now())
+                }.getOrDefault(false)
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .background(
+                        if (overdueCount > 0) Color(0xFFFEF2F2) else Color(0xFFFFFBEB),
+                        RoundedCornerShape(14.dp)
+                    )
+                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Text(if (overdueCount > 0) "🔴" else "⏰", fontSize = 20.sp)
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        if (overdueCount > 0)
+                            "$overdueCount bill${if (overdueCount > 1) "s" else ""} overdue!"
+                        else
+                            "${upcomingBills.size} bill${if (upcomingBills.size > 1) "s" else ""} due this week",
+                        fontSize = 13.sp, fontWeight = FontWeight.SemiBold,
+                        color = if (overdueCount > 0) Color(0xFFDC2626) else Color(0xFFB45309)
+                    )
+                    Text(
+                        "Total $${"%.2f".format(totalDue)} · tap Recurring tab",
+                        fontSize = 11.sp,
+                        color = if (overdueCount > 0) Color(0xFFEF4444) else Color(0xFFF59E0B)
+                    )
+                }
+                Icon(
+                    Icons.Default.ChevronRight, null,
+                    tint = if (overdueCount > 0) Color(0xFFEF4444) else Color(0xFFF59E0B),
+                    modifier = Modifier.size(18.dp)
+                )
             }
         }
 
@@ -130,18 +232,20 @@ fun SkylineScreen() {
 
         // ── 30-Day Trend Chart ─────────────────────────────────────
         if (dailyTrends.isNotEmpty()) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(2.dp)
-            ) {
-                Column(Modifier.padding(16.dp)) {
-                    Text("30-Day Overview", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    Spacer(Modifier.height(12.dp))
-                    DailyTrendChart(trends = dailyTrends)
+            FadeSlideIn(delayMs = 100) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(2.dp)
+                ) {
+                    Column(Modifier.padding(16.dp)) {
+                        Text(stringResource(R.string.thirty_day_trend), fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Spacer(Modifier.height(12.dp))
+                        DailyTrendChart(trends = dailyTrends)
+                    }
                 }
             }
         }
@@ -151,26 +255,28 @@ fun SkylineScreen() {
         // ── Expense Breakdown ──────────────────────────────────────
         val expenseCategories = summary?.expenseCategories ?: emptyList()
         if (expenseCategories.isNotEmpty()) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(2.dp)
-            ) {
-                Column(Modifier.padding(16.dp)) {
-                    Text("Expense Breakdown", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    Spacer(Modifier.height(12.dp))
-                    val total = expenseCategories.sumOf { it.value }
-                    expenseCategories.sortedByDescending { it.value }.take(5).forEach { cat ->
-                        CategoryBar(
-                            name = cat.name,
-                            amount = cat.value,
-                            total = total,
-                            color = categoryColor(cat.name)
-                        )
-                        Spacer(Modifier.height(8.dp))
+            FadeSlideIn(delayMs = 200) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(2.dp)
+                ) {
+                    Column(Modifier.padding(16.dp)) {
+                        Text(stringResource(R.string.expense_breakdown), fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Spacer(Modifier.height(12.dp))
+                        val total = expenseCategories.sumOf { it.value }
+                        expenseCategories.sortedByDescending { it.value }.take(5).forEach { cat ->
+                            CategoryBar(
+                                name = cat.name,
+                                amount = cat.value,
+                                total = total,
+                                color = categoryColor(cat.name)
+                            )
+                            Spacer(Modifier.height(8.dp))
+                        }
                     }
                 }
             }
@@ -180,21 +286,25 @@ fun SkylineScreen() {
 
         // ── Recent Transactions ────────────────────────────────────
         if (recentTransactions.isNotEmpty()) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(2.dp)
-            ) {
-                Column(Modifier.padding(16.dp)) {
-                    Text("Recent Transactions", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    Spacer(Modifier.height(8.dp))
-                    recentTransactions.forEach { tx ->
-                        TransactionRow(tx)
-                        if (tx != recentTransactions.last()) {
-                            HorizontalDivider(color = Color(0xFFF1F5F9))
+            FadeSlideIn(delayMs = 300) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(2.dp)
+                ) {
+                    Column(Modifier.padding(16.dp)) {
+                        Text(stringResource(R.string.recent_transactions), fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Spacer(Modifier.height(8.dp))
+                        recentTransactions.forEachIndexed { index, tx ->
+                            StaggeredItem(index = index) {
+                                TransactionRow(tx)
+                                if (tx != recentTransactions.last()) {
+                                    HorizontalDivider(color = Color(0xFFF1F5F9))
+                                }
+                            }
                         }
                     }
                 }

@@ -11,9 +11,14 @@ import androidx.compose.ui.*
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.z.financetracker.R
+import com.z.financetracker.component.ToastHost
+import com.z.financetracker.component.rememberToastState
 import com.z.financetracker.util.TokenManager
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,34 +26,21 @@ fun DashboardScreen(onLogout: () -> Unit) {
     var currentTab by remember { mutableStateOf("home") }
     var showRecordSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val toast = rememberToastState()
+    val scope = rememberCoroutineScope()
 
     Scaffold(
-        floatingActionButton = {
-            // Only show FAB when NOT on AI screen
-            if (currentTab != "ai") {
-                FloatingActionButton(
-                    onClick = { showRecordSheet = true },
-                    shape = CircleShape,
-                    containerColor = Color(0xFF2563EB),
-                    contentColor = Color.White,
-                    elevation = FloatingActionButtonDefaults.elevation(6.dp)
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = "Add transaction", modifier = Modifier.size(28.dp))
-                }
-            }
-        },
-        floatingActionButtonPosition = FabPosition.End,
         bottomBar = {
             NavigationBar(
                 containerColor = Color.White,
                 tonalElevation = 8.dp
             ) {
                 listOf(
-                    NavItem("home",        "Home",         Icons.Default.Home),
-                    NavItem("transactions","Transactions",  Icons.Default.Receipt),
-                    NavItem("analytics",   "Analytics",    Icons.Default.BarChart),
-                    NavItem("profile",     "Profile",      Icons.Default.Person),
-                    NavItem("ai", "AI Advisor", Icons.Default.AutoAwesome)
+                    NavItem("home",         stringResource(R.string.home),         Icons.Default.Home),
+                    NavItem("transactions", stringResource(R.string.transactions),  Icons.Default.Receipt),
+                    NavItem("analytics",    stringResource(R.string.analytics),     Icons.Default.BarChart),
+                    NavItem("profile",      stringResource(R.string.profile),       Icons.Default.Person)
+//                    NavItem("ai", stringResource(R.string.ai_advisor), Icons.Default.AutoAwesome)
                 ).forEach { item ->
                     NavigationBarItem(
                         selected = currentTab == item.route,
@@ -68,12 +60,13 @@ fun DashboardScreen(onLogout: () -> Unit) {
         }
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+            ToastHost(toast)
             when (currentTab) {
-                "home"         -> SkylineScreen()
+                "home"         -> SkylineScreen(onAddRecord = { showRecordSheet = true })
                 "transactions" -> HistoryScreen()
                 "analytics"    -> AnalyticsWithBudgetAndGoalScreen()
                 "profile"      -> ProfileScreen(onLogout = onLogout)
-                "ai" -> AiChatScreen()
+//                "ai" -> AiChatScreen()
             }
         }
 
@@ -103,8 +96,12 @@ fun DashboardScreen(onLogout: () -> Unit) {
                     }
                 }
             ) {
+                val recordSaved = stringResource(R.string.record_saved)
                 RecordScreen(
-                    onSuccess = { showRecordSheet = false }
+                    onSuccess = {
+                        showRecordSheet = false
+                        scope.launch { toast.showSuccess(recordSaved) }
+                    }
                 )
             }
         }

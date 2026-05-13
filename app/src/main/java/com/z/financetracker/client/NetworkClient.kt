@@ -11,13 +11,21 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object NetworkClient {
-    private const val BASE_URL = BuildConfig.BASE_URL
 
-    // Regular client — 10s timeout (default)
+    // Public so screens can build authenticated image URLs:
+    // "${NetworkClient.BASE_URL}api/transactions/{id}/image"
+    public val BASE_URL: String = BuildConfig.BASE_URL
+
     private fun getRetrofit(context: Context): Retrofit {
         val tokenManager = TokenManager(context)
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor(tokenManager))
+            .addInterceptor { chain ->
+                val request = chain.request().newBuilder()
+                    .addHeader("ngrok-skip-browser-warning", "true")
+                    .build()
+                chain.proceed(request)
+            }
             .connectTimeout(600, TimeUnit.SECONDS)
             .readTimeout(600, TimeUnit.SECONDS)
             .writeTimeout(600, TimeUnit.SECONDS)
@@ -30,13 +38,12 @@ object NetworkClient {
             .build()
     }
 
-    // AI client — 3 minute timeout because Llama 3 is slow
     private fun getAiRetrofit(context: Context): Retrofit {
         val tokenManager = TokenManager(context)
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor(tokenManager))
             .connectTimeout(300, TimeUnit.SECONDS)
-            .readTimeout(600, TimeUnit.SECONDS)   // 3 min read timeout
+            .readTimeout(600, TimeUnit.SECONDS)
             .writeTimeout(300, TimeUnit.SECONDS)
             .build()
 
@@ -65,7 +72,10 @@ object NetworkClient {
     fun getGoalApi(context: Context): GoalService =
         getRetrofit(context).create(GoalService::class.java)
 
-    // ← Uses the slow-tolerant client
     fun getAiApi(context: Context): AiService =
         getAiRetrofit(context).create(AiService::class.java)
+
+    fun getRecurringApi(context: Context): RecurringService =
+        getRetrofit(context).create(RecurringService::class.java)
+
 }
