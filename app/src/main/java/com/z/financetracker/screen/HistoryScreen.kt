@@ -5,6 +5,9 @@ import android.net.Uri
 import android.util.Log
 import androidx.core.content.FileProvider
 import androidx.compose.animation.*
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
@@ -656,99 +659,144 @@ private fun ActiveFilterChip(label: String, onRemove: () -> Unit) {
 @Composable
 private fun TappableTransactionCard(tx: Transaction, onClick: () -> Unit) {
     val isIncome = tx.type.name == "INCOME"
-    Card(
+    var flipped by remember { mutableStateOf(false) }
+    val rotation by animateFloatAsState(
+        targetValue = if (flipped) 180f else 0f,
+        animationSpec = tween(durationMillis = 500),
+        label = "cardFlip"
+    )
+    val showBack = rotation > 90f
+
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() },
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(1.dp)
+            .graphicsLayer { rotationY = rotation; cameraDistance = 14f * density }
+            .clickable { flipped = !flipped }
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Receipt image thumbnail — use presigned URL (fast, direct to MinIO) or fallback to proxy
-            val thumbUrl = tx.imagePresignedUrl
-            if (thumbUrl != null) {
-                SubcomposeAsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(thumbUrl)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(44.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                    contentScale = ContentScale.Crop,
-                    loading = {
-                        Box(
-                            Modifier
-                                .size(44.dp)
-                                .background(Color(0xFFE5E7EB), RoundedCornerShape(8.dp))
+        if (!showBack) {
+            // ── FRONT ───────────────────────────────────────────────
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(14.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(2.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(14.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(46.dp)
+                            .background(
+                                if (isIncome) Color(0xFFD1FAE5) else Color(0xFFFEE2E2),
+                                RoundedCornerShape(13.dp)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            if (isIncome) Icons.Default.ArrowUpward else Icons.Default.ArrowDownward,
+                            null,
+                            tint = if (isIncome) Color(0xFF059669) else Color(0xFFDC2626),
+                            modifier = Modifier.size(22.dp)
                         )
                     }
-                )
-            } else {
-                Box(
-                    modifier = Modifier
-                        .size(44.dp)
-                        .background(
-                            if (isIncome) Color(0xFFD1FAE5) else Color(0xFFFEE2E2),
-                            RoundedCornerShape(12.dp)
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        if (isIncome) Icons.Default.ArrowUpward else Icons.Default.ArrowDownward,
-                        null,
-                        tint = if (isIncome) Color(0xFF059669) else Color(0xFFDC2626),
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-            }
-
-            Spacer(Modifier.width(12.dp))
-
-            Column(Modifier.weight(1f)) {
-                Text(
-                    tx.text, fontWeight = FontWeight.SemiBold, fontSize = 14.sp,
-                    maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                )
-                Spacer(Modifier.height(2.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    if (!tx.categoryName.isNullOrBlank()) {
-                        Box(
-                            modifier = Modifier
-                                .background(Color(0xFFEFF6FF), RoundedCornerShape(4.dp))
-                                .padding(horizontal = 6.dp, vertical = 2.dp)
-                        ) {
-                            Text(tx.categoryName, fontSize = 10.sp, color = Color(0xFF2563EB),
-                                fontWeight = FontWeight.Medium)
+                    Spacer(Modifier.width(12.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text(tx.text, fontWeight = FontWeight.SemiBold, fontSize = 14.sp,
+                            maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Spacer(Modifier.height(3.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            if (!tx.categoryName.isNullOrBlank()) {
+                                Box(
+                                    Modifier.background(Color(0xFFEFF6FF), RoundedCornerShape(4.dp))
+                                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                                ) {
+                                    Text(tx.categoryName, fontSize = 10.sp, color = Color(0xFF2563EB),
+                                        fontWeight = FontWeight.Medium)
+                                }
+                            }
+                            Text(tx.date, fontSize = 11.sp, color = Color(0xFF9CA3AF))
                         }
                     }
-                    Text(tx.date, fontSize = 11.sp, color = Color(0xFF9CA3AF))
-                }
-                if (!tx.note.isNullOrBlank()) {
-                    Text(tx.note, fontSize = 11.sp, color = Color(0xFF6B7280),
-                        maxLines = 1,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                    Column(horizontalAlignment = Alignment.End) {
+                        Text(
+                            "${if (isIncome) "+" else "-"}${fmtAmt(tx.amount.absoluteValue)}",
+                            fontWeight = FontWeight.Bold, fontSize = 14.sp,
+                            color = if (isIncome) Color(0xFF059669) else Color(0xFFDC2626)
+                        )
+                        Spacer(Modifier.height(2.dp))
+                        Text("tap to flip", fontSize = 9.sp, color = Color(0xFFD1D5DB))
+                    }
                 }
             }
-
-            Spacer(Modifier.width(8.dp))
-
-            Column(horizontalAlignment = Alignment.End) {
-                Text(
-                    "${if (isIncome) "+" else "-"}${fmtAmt(tx.amount.absoluteValue)}",
-                    fontWeight = FontWeight.Bold, fontSize = 14.sp,
-                    color = if (isIncome) Color(0xFF059669) else Color(0xFFDC2626)
-                )
-                // Show camera icon if has image
-                if (!tx.imagePresignedUrl.isNullOrBlank()) {
-                    Spacer(Modifier.height(2.dp))
-                    Icon(Icons.Default.PhotoCamera, null,
-                        tint = Color(0xFF9CA3AF), modifier = Modifier.size(12.dp))
+        } else {
+            // ── BACK ────────────────────────────────────────────────
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .graphicsLayer { rotationY = 180f }
+            ) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFF0F172A)
+                    ),
+                    elevation = CardDefaults.cardElevation(6.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(14.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Receipt thumbnail or placeholder
+                        val thumbUrl = tx.imagePresignedUrl
+                        if (!thumbUrl.isNullOrBlank()) {
+                            SubcomposeAsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(thumbUrl).crossfade(true).build(),
+                                contentDescription = null,
+                                modifier = Modifier.size(56.dp).clip(RoundedCornerShape(10.dp)),
+                                contentScale = ContentScale.Crop,
+                                loading = {
+                                    Box(Modifier.size(56.dp).background(Color(0xFF1E293B), RoundedCornerShape(10.dp)))
+                                }
+                            )
+                        } else {
+                            Box(
+                                Modifier.size(56.dp)
+                                    .background(Color(0xFF1E293B), RoundedCornerShape(10.dp)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(Icons.Default.Receipt, null,
+                                    tint = Color(0xFF334155), modifier = Modifier.size(26.dp))
+                            }
+                        }
+                        Spacer(Modifier.width(14.dp))
+                        Column(Modifier.weight(1f)) {
+                            Text("NOTE", fontSize = 9.sp, color = Color(0xFF64748B),
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 1.5.sp)
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                if (!tx.note.isNullOrBlank()) tx.note else "No note added",
+                                fontSize = 13.sp,
+                                color = if (!tx.note.isNullOrBlank()) Color.White else Color(0xFF475569),
+                                fontStyle = if (tx.note.isNullOrBlank())
+                                    androidx.compose.ui.text.font.FontStyle.Italic
+                                else androidx.compose.ui.text.font.FontStyle.Normal,
+                                lineHeight = 18.sp
+                            )
+                        }
+                        Spacer(Modifier.width(8.dp))
+                        // Tap detail
+                        Column(horizontalAlignment = Alignment.End) {
+                            Icon(Icons.Default.OpenInBrowser, null,
+                                tint = Color(0xFF334155), modifier = Modifier.size(14.dp))
+                            Spacer(Modifier.height(4.dp))
+                            Text("details", fontSize = 9.sp, color = Color(0xFF334155))
+                        }
+                    }
                 }
             }
         }
