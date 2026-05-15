@@ -21,4 +21,7 @@ interface ProfileService {
     suspend fun uploadAvatar(
         @Part image: MultipartBody.Part
     ): Response<Map<String, String>>
+
+    @DELETE("api/profile/account")
+    suspend fun deleteAccount(): Response<Map<String, String>>
 }

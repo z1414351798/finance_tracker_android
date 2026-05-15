@@ -124,4 +124,11 @@
     <string name="view_all">查看全部 →</string>
     <string name="no_recent_transactions">暂无最近交易</string>
     <string name="upcoming_bills">即将到期的账单</string>
+
+    <!-- Delete Account -->
+    <string name="delete_account">删除账户</string>
+    <string name="delete_account_subtitle">永久删除所有数据</string>
+    <string name="delete_account_title">确认删除账户？</string>
+    <string name="delete_account_message">此操作将永久删除您的账户、所有交易记录、分类、目标及上传的图片，无法恢复。</string>
+    <string name="delete_confirm">永久删除</string>
 </resources>

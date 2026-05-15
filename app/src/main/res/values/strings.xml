@@ -124,4 +124,11 @@
     <string name="view_all">View all →</string>
     <string name="no_recent_transactions">No recent transactions</string>
     <string name="upcoming_bills">Upcoming Bills</string>
+
+    <!-- Delete Account -->
+    <string name="delete_account">Delete Account</string>
+    <string name="delete_account_subtitle">Permanently remove all your data</string>
+    <string name="delete_account_title">Delete Account?</string>
+    <string name="delete_account_message">This will permanently delete your account, all transactions, categories, goals, and uploaded images. This action cannot be undone.</string>
+    <string name="delete_confirm">Delete Forever</string>
 </resources>

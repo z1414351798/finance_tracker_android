@@ -62,6 +62,10 @@ fun ProfileScreen(onLogout: () -> Unit) {
     // URI handler for opening links
     val uriHandler = LocalUriHandler.current
 
+    // Delete account confirmation dialog
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var isDeletingAccount by remember { mutableStateOf(false) }
+
     // Snackbar
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -649,8 +653,94 @@ fun ProfileScreen(onLogout: () -> Unit) {
                 }
             }
 
+            Spacer(Modifier.height(12.dp))
+
+            // ── Delete Account ──────────────────────────────────────────────
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { showDeleteDialog = true },
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF1F2))
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .background(Color(0xFFFFE4E6), RoundedCornerShape(10.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Default.DeleteForever,
+                            null,
+                            tint = Color(0xFF9F1239),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    Spacer(Modifier.width(14.dp))
+                    Column {
+                        Text(
+                            stringResource(R.string.delete_account),
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 15.sp,
+                            color = Color(0xFF9F1239)
+                        )
+                        Text(
+                            stringResource(R.string.delete_account_subtitle),
+                            fontSize = 12.sp,
+                            color = Color(0xFF9F1239).copy(alpha = 0.6f)
+                        )
+                    }
+                }
+            }
+
             Spacer(Modifier.height(32.dp))
         }
+    }
+
+    // ── Delete Account confirmation dialog ────────────────────────────────────
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text(stringResource(R.string.delete_account_title), fontWeight = FontWeight.Bold) },
+            text  = { Text(stringResource(R.string.delete_account_message)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteDialog = false
+                        scope.launch {
+                            isDeletingAccount = true
+                            try {
+                                val response = NetworkClient.getProfileApi(context).deleteAccount()
+                                if (response.isSuccessful) {
+                                    TokenManager(context).clearToken()
+                                    onLogout()
+                                } else {
+                                    showMsg("Failed to delete account")
+                                }
+                            } catch (e: Exception) {
+                                showMsg("Error: ${e.message}")
+                            } finally {
+                                isDeletingAccount = false
+                            }
+                        }
+                    },
+                    enabled = !isDeletingAccount
+                ) {
+                    Text(stringResource(R.string.delete_confirm), color = Color(0xFF9F1239), fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
     }
 }
 
