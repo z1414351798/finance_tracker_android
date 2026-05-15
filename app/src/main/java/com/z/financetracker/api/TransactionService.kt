@@ -4,6 +4,7 @@ import com.z.financetracker.entity.DailyTrend
 import com.z.financetracker.entity.Transaction
 import com.z.financetracker.enums.TraType
 import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -75,6 +76,10 @@ interface TransactionService {
     suspend fun getBiggestTransactions(
         @Query("limit") limit: Int = 5
     ): Response<List<BigTransaction>>
+
+    @GET("api/transactions/export/csv")
+    @Streaming
+    suspend fun exportCsv(): Response<ResponseBody>
 }
 
 // Response models

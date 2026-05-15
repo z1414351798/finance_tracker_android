@@ -1,7 +1,9 @@
 package com.z.financetracker.screen
 
+import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import androidx.core.content.FileProvider
 import androidx.compose.animation.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -70,6 +72,7 @@ fun HistoryScreen() {
     val toast = rememberToastState()
 
     var selectedTransaction by remember { mutableStateOf<Transaction?>(null) }
+    var isExportingCsv by remember { mutableStateOf(false) }
     var showDetailSheet by remember { mutableStateOf(false) }
     val detailSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
@@ -382,13 +385,73 @@ fun HistoryScreen() {
                 }
             }
 
-            // ── Count ──────────────────────────────────────────────
+            // ── Count + Export ─────────────────────────────────────
             if (!isLoading) {
-                Text(
-                    stringResource(R.string.transactions_count, totalElements),
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                    fontSize = 12.sp, color = Color(0xFF6B7280)
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        stringResource(R.string.transactions_count, totalElements),
+                        fontSize = 12.sp, color = Color(0xFF6B7280)
+                    )
+                    // Export CSV button
+                    TextButton(
+                        onClick = {
+                            scope.launch {
+                                isExportingCsv = true
+                                try {
+                                    val response = NetworkClient.getTransactionApi(context).exportCsv()
+                                    if (response.isSuccessful) {
+                                        val bytes = response.body()?.bytes() ?: return@launch
+                                        val fileName = "transactions_${System.currentTimeMillis()}.csv"
+                                        val file = java.io.File(context.cacheDir, fileName)
+                                        file.writeBytes(bytes)
+                                        val uri = FileProvider.getUriForFile(
+                                            context,
+                                            "${context.packageName}.provider",
+                                            file
+                                        )
+                                        val intent = Intent(Intent.ACTION_SEND).apply {
+                                            type = "text/csv"
+                                            putExtra(Intent.EXTRA_STREAM, uri)
+                                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                        }
+                                        context.startActivity(Intent.createChooser(intent, "Share CSV"))
+                                    }
+                                } catch (e: Exception) {
+                                    toast.showError("Export failed: ${e.message}")
+                                } finally {
+                                    isExportingCsv = false
+                                }
+                            }
+                        },
+                        enabled = !isExportingCsv,
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
+                    ) {
+                        if (isExportingCsv) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(14.dp),
+                                strokeWidth = 2.dp,
+                                color = Color(0xFF059669)
+                            )
+                        } else {
+                            Icon(Icons.Default.Share, null,
+                                tint = Color(0xFF059669),
+                                modifier = Modifier.size(14.dp))
+                        }
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            stringResource(R.string.export_csv),
+                            fontSize = 12.sp,
+                            color = Color(0xFF059669),
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
             }
 
             // ── List ───────────────────────────────────────────────

@@ -125,6 +125,9 @@
     <string name="no_recent_transactions">暂无最近交易</string>
     <string name="upcoming_bills">即将到期的账单</string>
 
+    <!-- Export -->
+    <string name="export_csv">导出 CSV</string>
+
     <!-- Delete Account -->
     <string name="delete_account">删除账户</string>
     <string name="delete_account_subtitle">永久删除所有数据</string>

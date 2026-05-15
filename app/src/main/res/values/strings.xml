@@ -125,6 +125,9 @@
     <string name="no_recent_transactions">No recent transactions</string>
     <string name="upcoming_bills">Upcoming Bills</string>
 
+    <!-- Export -->
+    <string name="export_csv">Export CSV</string>
+
     <!-- Delete Account -->
     <string name="delete_account">Delete Account</string>
     <string name="delete_account_subtitle">Permanently remove all your data</string>
