@@ -14,6 +14,7 @@
     <string name="expense">Expense</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
     <string name="add">Add</string>
@@ -103,6 +104,18 @@
     <string name="strength_medium">Medium</string>
     <string name="strength_weak">Weak</string>
     <string name="strength_too_short">Too short</string>
+
+    <!-- Consent / Privacy Screen -->
+    <string name="before_you_begin">Before you begin</string>
+    <string name="privacy_subtitle">FinanceTracker takes your privacy seriously</string>
+    <string name="privacy_point_1">Your data is encrypted and stored securely</string>
+    <string name="privacy_point_2">We never sell your financial data to third parties</string>
+    <string name="privacy_point_3">You can delete your account and all data at any time</string>
+    <string name="privacy_point_4">No location tracking, no advertising networks</string>
+    <string name="privacy_agree_checkbox">I have read and agree to the Privacy Policy and Terms of Service</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="terms_of_service">Terms of Service</string>
+    <string name="continue_btn">Continue</string>
 
     <!-- Home Screen -->
     <string name="thirty_day_trend">30-Day Trend</string>

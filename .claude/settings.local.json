@@ -8,7 +8,28 @@
       "Bash(docker exec *)",
       "Bash(chmod +x /Users/andrea/Desktop/Java/finance_tracker/build.sh /Users/andrea/Desktop/Java/finance_tracker/deploy.sh)",
       "Bash(find /Users/andrea -name \"nginx.conf\" 2>/dev/null | grep -v \".git\" ; echo \"DONE\")",
-      "Bash(xargs ls -la)"
+      "Bash(xargs ls -la)",
+      "Bash(xcodebuild -version)",
+      "Bash(swift --version)",
+      "Bash(mkdir -p ~/Desktop/iOS/FinanceTracker)",
+      "Bash(brew install *)",
+      "Bash(/usr/local/bin/xcodegen generate *)",
+      "Bash(xcodebuild -project FinanceTracker.xcodeproj -scheme FinanceTracker -destination \"generic/platform=iOS Simulator\" -configuration Debug CODE_SIGNING_ALLOWED=NO build)",
+      "Bash(xcodegen generate *)",
+      "Bash(wait)",
+      "Bash(npm run *)",
+      "Bash(rsync -avz --delete dist/ root@156.239.40.189:/opt/finance-tracker/frontend/)",
+      "Bash(./gradlew assembleDebug)",
+      "Bash(xargs ls)",
+      "Bash(mvn clean *)",
+      "Bash(bash build.sh)",
+      "Bash(open -a Docker)",
+      "Bash(docker info *)",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' -X POST https://www.wisefintrakr.com/api/consent -H 'Content-Type: application/json' -d '{\"platform\":\"test\",\"policyVersion\":\"2026-05\"}')",
+      "Bash(curl -s -X POST https://www.wisefintrakr.com/api/auth/login -H 'Content-Type: application/json' -d '{\"username\":\"test\",\"password\":\"test123\"}')",
+      "Bash(bash upload.sh)",
+      "Bash(xcodebuild -scheme FinanceTracker -configuration Debug -destination 'generic/platform=iOS Simulator' build)",
+      "Bash(curl -sv -X POST https://www.wisefintrakr.com/api/auth/login -H 'Content-Type: application/json' -d '{\"username\":\"Andy\",\"password\":\"123456\"}')"
     ]
   }
 }

@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
+import com.z.financetracker.api.ConsentRequest
 import com.z.financetracker.client.NetworkClient
 import com.z.financetracker.component.GoogleSignInButton
 import com.z.financetracker.entity.User
@@ -195,6 +196,11 @@ fun LoginScreen(onNavigateToSignup: () -> Unit, onLoginSuccess: () -> Unit) {
                                             val token = response.body()?.token
                                             if (token != null) {
                                                 TokenManager(context).saveToken(token)
+                                                try {
+                                                    NetworkClient.getConsentApi(context).recordConsent(
+                                                        ConsentRequest(platform = "android", policyVersion = "2026-05")
+                                                    )
+                                                } catch (_: Exception) { }
                                                 onLoginSuccess()
                                             }
                                         } else {

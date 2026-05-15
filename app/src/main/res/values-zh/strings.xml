@@ -14,6 +14,7 @@
     <string name="expense">支出</string>
     <string name="save">保存</string>
     <string name="cancel">取消</string>
+    <string name="ok">确定</string>
     <string name="delete">删除</string>
     <string name="edit">编辑</string>
     <string name="add">添加</string>
@@ -103,6 +104,18 @@
     <string name="strength_medium">中</string>
     <string name="strength_weak">弱</string>
     <string name="strength_too_short">太短</string>
+
+    <!-- Consent / Privacy Screen -->
+    <string name="before_you_begin">开始之前</string>
+    <string name="privacy_subtitle">FinanceTracker 重视您的隐私</string>
+    <string name="privacy_point_1">您的数据已加密并安全存储</string>
+    <string name="privacy_point_2">我们绝不向第三方出售您的财务数据</string>
+    <string name="privacy_point_3">您可以随时删除账户及所有数据</string>
+    <string name="privacy_point_4">无位置跟踪，无广告网络</string>
+    <string name="privacy_agree_checkbox">我已阅读并同意隐私政策和服务条款</string>
+    <string name="privacy_policy">隐私政策</string>
+    <string name="terms_of_service">服务条款</string>
+    <string name="continue_btn">继续</string>
 
     <!-- Home Screen -->
     <string name="thirty_day_trend">30天趋势</string>

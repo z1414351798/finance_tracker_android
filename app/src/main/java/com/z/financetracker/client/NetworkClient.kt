@@ -78,4 +78,7 @@ object NetworkClient {
     fun getRecurringApi(context: Context): RecurringService =
         getRetrofit(context).create(RecurringService::class.java)
 
+    fun getConsentApi(context: Context): ConsentService =
+        getRetrofit(context).create(ConsentService::class.java)
+
 }

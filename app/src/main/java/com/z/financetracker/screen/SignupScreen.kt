@@ -14,9 +14,11 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
+import com.z.financetracker.api.ConsentRequest
 import com.z.financetracker.client.NetworkClient
 import com.z.financetracker.component.GoogleSignInButton
 import com.z.financetracker.entity.User
+import com.z.financetracker.util.TokenManager
 import kotlinx.coroutines.launch
 
 @Composable
@@ -213,6 +215,15 @@ fun SignupScreen(onNavigateToLogin: () -> Unit, onSignupSuccess: () -> Unit) {
                                             User(username = username, password = password)
                                         )
                                         if (response.isSuccessful) {
+                                            val token = response.body()?.token
+                                            if (token != null) {
+                                                TokenManager(context).saveToken(token)
+                                                try {
+                                                    NetworkClient.getConsentApi(context).recordConsent(
+                                                        ConsentRequest(platform = "android", policyVersion = "2026-05")
+                                                    )
+                                                } catch (_: Exception) { }
+                                            }
                                             onSignupSuccess()
                                         } else {
                                             snackbar.showSnackbar("Username already exists")

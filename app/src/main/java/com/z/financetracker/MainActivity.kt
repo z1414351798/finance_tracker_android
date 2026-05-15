@@ -7,11 +7,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.z.financetracker.screen.ConsentScreen
 import com.z.financetracker.screen.DashboardScreen
 import com.z.financetracker.screen.LoginScreen
 import com.z.financetracker.screen.SignupScreen
@@ -50,9 +52,26 @@ fun GreetingPreview() {
 fun FinanceAppNavigation(context: Context) {
     val navController = rememberNavController()
     val tokenManager = TokenManager(context)
-    val startDest = if (tokenManager.getToken() != null) "dashboard" else "login"
+
+    val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    val hasAcceptedPrivacy = remember { prefs.getBoolean("privacy_accepted", false) }
+    val startDest = when {
+        !hasAcceptedPrivacy -> "consent"
+        tokenManager.getToken() != null -> "dashboard"
+        else -> "login"
+    }
 
     NavHost(navController = navController, startDestination = startDest) {
+        composable("consent") {
+            ConsentScreen(
+                onAccepted = {
+                    val dest = if (tokenManager.getToken() != null) "dashboard" else "login"
+                    navController.navigate(dest) {
+                        popUpTo("consent") { inclusive = true }
+                    }
+                }
+            )
+        }
         composable("login") {
             LoginScreen(
                 onNavigateToSignup = { navController.navigate("signup") },

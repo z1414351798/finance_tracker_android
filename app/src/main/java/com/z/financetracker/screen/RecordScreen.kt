@@ -38,9 +38,13 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -60,6 +64,12 @@ fun RecordScreen(onSuccess: () -> Unit) {
     var selectedImageUri     by remember { mutableStateOf<Uri?>(null) }
     var isUploading          by remember { mutableStateOf(false) }
     var showFullImagePreview by remember { mutableStateOf(false) }
+
+    // Date picker
+    var selectedDate by remember { mutableStateOf(Calendar.getInstance()) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    val dateFormatter    = SimpleDateFormat("yyyy-MM-dd",   Locale.getDefault())
+    val displayFormatter = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -144,6 +154,44 @@ fun RecordScreen(onSuccess: () -> Unit) {
         FinanceInput(value = amount, onValueChange = { amount = it }, label = stringResource(R.string.amount_label))
         Spacer(Modifier.height(8.dp))
         FinanceInput(value = note,   onValueChange = { note   = it }, label = stringResource(R.string.note_optional))
+
+        Spacer(Modifier.height(8.dp))
+
+        // ── Date picker row ───────────────────────────────────────────────────
+        OutlinedCard(
+            onClick = { showDatePicker = true },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Default.CalendarToday,
+                        contentDescription = null,
+                        tint = Color(0xFF6B7280),
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(Modifier.width(10.dp))
+                    Text(
+                        text = displayFormatter.format(selectedDate.time),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF374151)
+                    )
+                }
+                Icon(
+                    Icons.Default.ArrowDropDown,
+                    contentDescription = null,
+                    tint = Color(0xFF9CA3AF)
+                )
+            }
+        }
 
         Spacer(Modifier.height(16.dp))
 
@@ -249,7 +297,7 @@ fun RecordScreen(onSuccess: () -> Unit) {
                             amount     = finalAmount,
                             categoryId = selectedCategory?.id ?: 0L,
                             type       = selectedType,
-                            date       = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date()),
+                            date       = dateFormatter.format(selectedDate.time),
                             note       = note
                         )
                         val resp = NetworkClient.getTransactionApi(context).addTransaction(tx)
@@ -279,6 +327,31 @@ fun RecordScreen(onSuccess: () -> Unit) {
                     modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
             else
                 Text(stringResource(R.string.save))
+        }
+    }
+
+    // ── Date picker dialog ────────────────────────────────────────────────────
+    if (showDatePicker) {
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = selectedDate.timeInMillis
+        )
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    datePickerState.selectedDateMillis?.let { millis ->
+                        selectedDate = Calendar.getInstance().apply { timeInMillis = millis }
+                    }
+                    showDatePicker = false
+                }) { Text(stringResource(R.string.ok)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
         }
     }
 

@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.*
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import androidx.compose.ui.platform.LocalUriHandler
 import com.z.financetracker.R
 import com.z.financetracker.client.NetworkClient
 import com.z.financetracker.component.LanguageSwitcher
@@ -57,6 +58,9 @@ fun ProfileScreen(onLogout: () -> Unit) {
     var showCurrentPw by remember { mutableStateOf(false) }
     var showNewPw by remember { mutableStateOf(false) }
     var isSavingPassword by remember { mutableStateOf(false) }
+
+    // URI handler for opening links
+    val uriHandler = LocalUriHandler.current
 
     // Snackbar
     val snackbarHostState = remember { SnackbarHostState() }
@@ -536,6 +540,62 @@ fun ProfileScreen(onLogout: () -> Unit) {
                             }
                         }
                     }
+                }
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            // ── Privacy & Legal Card ───────────────────────────────
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(4.dp)
+            ) {
+                Column {
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.privacy_policy)) },
+                        leadingContent = {
+                            Icon(
+                                Icons.Default.PrivacyTip,
+                                contentDescription = null,
+                                tint = Color(0xFF2563EB)
+                            )
+                        },
+                        trailingContent = {
+                            Icon(
+                                Icons.Default.OpenInNew,
+                                contentDescription = null,
+                                tint = Color(0xFF9CA3AF)
+                            )
+                        },
+                        modifier = Modifier.clickable {
+                            uriHandler.openUri("https://www.wisefintrakr.com/privacy")
+                        }
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.terms_of_service)) },
+                        leadingContent = {
+                            Icon(
+                                Icons.Default.Description,
+                                contentDescription = null,
+                                tint = Color(0xFF2563EB)
+                            )
+                        },
+                        trailingContent = {
+                            Icon(
+                                Icons.Default.OpenInNew,
+                                contentDescription = null,
+                                tint = Color(0xFF9CA3AF)
+                            )
+                        },
+                        modifier = Modifier.clickable {
+                            uriHandler.openUri("https://www.wisefintrakr.com/terms")
+                        }
+                    )
                 }
             }
 

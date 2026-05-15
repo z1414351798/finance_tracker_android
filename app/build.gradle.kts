@@ -63,7 +63,7 @@ android {
         // Production server — your VPS with nginx + Let's Encrypt
         create("prod") {
             dimension = "env"
-            buildConfigField("String", "BASE_URL", "\"https://yourdomain.com/\"")
+            buildConfigField("String", "BASE_URL", "\"https://www.wisefintrakr.com/\"")
         }
     }
 }
