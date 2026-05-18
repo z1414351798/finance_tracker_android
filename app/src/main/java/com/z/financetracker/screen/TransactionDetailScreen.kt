@@ -26,6 +26,7 @@ import com.z.financetracker.component.ToastHost
 import com.z.financetracker.util.ImageCompressor
 import com.z.financetracker.component.rememberToastState
 import com.z.financetracker.entity.Transaction
+import com.z.financetracker.ui.theme.AppColors
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -171,7 +172,7 @@ fun TransactionDetailScreen(
                             Box(
                                 Modifier
                                     .fillMaxSize()
-                                    .background(Color(0xFFE5E7EB)),
+                                    .background(MaterialTheme.colorScheme.outline),
                                 contentAlignment = Alignment.Center
                             ) {
                                 CircularProgressIndicator(
@@ -261,7 +262,7 @@ fun TransactionDetailScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(Color(0xFFF1F5F9))
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
                             .clickable { imagePickerLauncher.launch("image/*") },
                         contentAlignment = Alignment.Center
                     ) {
@@ -270,9 +271,9 @@ fun TransactionDetailScreen(
                                 CircularProgressIndicator(color = Color(0xFF2563EB))
                             } else {
                                 Icon(Icons.Default.AddPhotoAlternate, null,
-                                    tint = Color(0xFF9CA3AF), modifier = Modifier.size(40.dp))
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(40.dp))
                                 Spacer(Modifier.height(8.dp))
-                                Text("Add receipt photo", color = Color(0xFF9CA3AF), fontSize = 14.sp)
+                                Text("Add receipt photo", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                             }
                         }
                     }
@@ -287,13 +288,13 @@ fun TransactionDetailScreen(
                         .size(36.dp)
                         .background(
                             if (currentTx.imageUrl != null) Color.Black.copy(alpha = 0.5f)
-                            else Color(0xFFE5E7EB),
+                            else MaterialTheme.colorScheme.outline,
                             CircleShape
                         )
                 ) {
                     Icon(
                         Icons.Default.ArrowBack, null,
-                        tint = if (currentTx.imageUrl != null) Color.White else Color(0xFF374151),
+                        tint = if (currentTx.imageUrl != null) Color.White else MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -310,19 +311,19 @@ fun TransactionDetailScreen(
                         "${if (isIncome) "+" else "-"}${fmtDetail(currentTx.amount.absoluteValue)}",
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Black,
-                        color = if (isIncome) Color(0xFF059669) else Color(0xFFDC2626)
+                        color = if (isIncome) AppColors.incomeText else AppColors.expenseText
                     )
                     Box(
                         modifier = Modifier
                             .background(
-                                if (isIncome) Color(0xFFD1FAE5) else Color(0xFFFEE2E2),
+                                if (isIncome) AppColors.incomeBackground else AppColors.expensBackground,
                                 RoundedCornerShape(20.dp)
                             )
                             .padding(horizontal = 12.dp, vertical = 6.dp)
                     ) {
                         Text(
                             currentTx.type.name,
-                            color = if (isIncome) Color(0xFF059669) else Color(0xFFDC2626),
+                            color = if (isIncome) AppColors.incomeText else AppColors.expenseText,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -333,7 +334,7 @@ fun TransactionDetailScreen(
                 Text(currentTx.text, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
 
                 Spacer(Modifier.height(20.dp))
-                HorizontalDivider(color = Color(0xFFF1F5F9))
+                HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
                 Spacer(Modifier.height(20.dp))
 
                 DetailRow(Icons.Default.CalendarMonth, "Date", currentTx.date)
@@ -370,7 +371,7 @@ fun TransactionDetailScreen(
                         onClick = { onDelete(currentTx) },
                         modifier = Modifier.weight(1f).height(50.dp),
                         shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFDC2626))
+                        colors = ButtonDefaults.buttonColors(containerColor = AppColors.expenseText)
                     ) {
                         Icon(Icons.Default.Delete, null, tint = Color.White,
                             modifier = Modifier.size(16.dp))
@@ -393,7 +394,7 @@ fun TransactionDetailScreen(
             shape = RoundedCornerShape(16.dp),
             title = { Text("Remove photo?", fontWeight = FontWeight.Bold) },
             text = { Text("The receipt photo will be permanently deleted.",
-                color = Color(0xFF6B7280)) },
+                color = MaterialTheme.colorScheme.onSurfaceVariant) },
             confirmButton = {
                 Button(
                     onClick = {
@@ -412,7 +413,7 @@ fun TransactionDetailScreen(
                             }
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFDC2626))
+                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.expenseText)
                 ) { Text("Remove") }
             },
             dismissButton = {
@@ -432,9 +433,9 @@ private fun DetailRow(
         Icon(icon, null, tint = Color(0xFF2563EB), modifier = Modifier.size(20.dp))
         Spacer(Modifier.width(12.dp))
         Column {
-            Text(label, fontSize = 11.sp, color = Color(0xFF9CA3AF))
+            Text(label, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.height(2.dp))
-            Text(value, fontSize = 15.sp, color = Color(0xFF111827), fontWeight = FontWeight.Medium)
+            Text(value, fontSize = 15.sp, color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Medium)
         }
     }
 }

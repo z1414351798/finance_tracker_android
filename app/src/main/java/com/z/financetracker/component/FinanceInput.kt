@@ -2,6 +2,7 @@ package com.z.financetracker.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -28,7 +29,7 @@ fun FinanceInput(
         visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = Color(0xFF2563EB), // Your Finance Blue
-            unfocusedBorderColor = Color(0xFFE5E7EB)
+            unfocusedBorderColor = MaterialTheme.colorScheme.outline
         )
     )
 }

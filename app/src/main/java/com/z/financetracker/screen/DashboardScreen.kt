@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.z.financetracker.R
+import com.z.financetracker.ui.theme.AppColors
 import com.z.financetracker.component.ToastHost
 import com.z.financetracker.component.rememberToastState
 import com.z.financetracker.util.TokenManager
@@ -32,7 +33,7 @@ fun DashboardScreen(onLogout: () -> Unit) {
     Scaffold(
         bottomBar = {
             NavigationBar(
-                containerColor = Color.White,
+                containerColor = MaterialTheme.colorScheme.surface,
                 tonalElevation = 8.dp
             ) {
                 listOf(
@@ -51,8 +52,8 @@ fun DashboardScreen(onLogout: () -> Unit) {
                             selectedIconColor   = Color(0xFF2563EB),
                             selectedTextColor   = Color(0xFF2563EB),
                             indicatorColor      = Color(0xFFEFF6FF),
-                            unselectedIconColor = Color(0xFF9CA3AF),
-                            unselectedTextColor = Color(0xFF9CA3AF)
+                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     )
                 }
@@ -76,7 +77,7 @@ fun DashboardScreen(onLogout: () -> Unit) {
                 onDismissRequest = { showRecordSheet = false },
                 sheetState = sheetState,
                 shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-                containerColor = Color.White,
+                containerColor = MaterialTheme.colorScheme.surface,
                 dragHandle = {
                     // Drag handle pill
                     Box(
@@ -91,7 +92,7 @@ fun DashboardScreen(onLogout: () -> Unit) {
                         Surface(
                             modifier = Modifier.size(width = 40.dp, height = 4.dp),
                             shape = CircleShape,
-                            color = Color(0xFFE5E7EB)
+                            color = MaterialTheme.colorScheme.outline
                         ) {}
                     }
                 }

@@ -21,6 +21,7 @@ import com.z.financetracker.component.DatePickerField
 import com.z.financetracker.component.ToastHost
 import com.z.financetracker.component.rememberToastState
 import com.z.financetracker.entity.SavingsGoal
+import com.z.financetracker.ui.theme.AppColors
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.time.LocalDate
@@ -58,7 +59,7 @@ fun GoalsScreen() {
     LaunchedEffect(Unit) { load() }
 
     Scaffold(
-        containerColor = Color(0xFFF8FAFC)
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) {
 
@@ -85,7 +86,7 @@ fun GoalsScreen() {
                                 Text(
                                     "${goals.count { it.currentAmount >= it.targetAmount }} of ${goals.size} completed",
                                     fontSize = 13.sp,
-                                    color = Color(0xFF6B7280)
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                             FloatingActionButton(
@@ -153,7 +154,7 @@ fun GoalsScreen() {
                                     Spacer(Modifier.height(4.dp))
                                     Text(
                                         "Set a goal and track your progress",
-                                        color = Color(0xFF9CA3AF),
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         fontSize = 14.sp
                                     )
                                     Spacer(Modifier.height(16.dp))
@@ -268,7 +269,7 @@ private fun GoalCard(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isComplete) Color(0xFFF0FDF4) else Color.White
+            containerColor = if (isComplete) AppColors.incomeBackground else MaterialTheme.colorScheme.surface
         ),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
@@ -284,7 +285,7 @@ private fun GoalCard(
                     modifier = Modifier
                         .size(48.dp)
                         .background(
-                            if (isComplete) Color(0xFFD1FAE5) else Color(0xFFEFF6FF),
+                            if (isComplete) AppColors.incomeBackground else MaterialTheme.colorScheme.surfaceVariant,
                             CircleShape
                         ),
                     contentAlignment = Alignment.Center
@@ -303,7 +304,7 @@ private fun GoalCard(
                         overflow = TextOverflow.Ellipsis
                     )
                     if (isComplete) {
-                        Text("🎉 Goal reached!", fontSize = 12.sp, color = Color(0xFF059669), fontWeight = FontWeight.Medium)
+                        Text("🎉 Goal reached!", fontSize = 12.sp, color = AppColors.incomeText, fontWeight = FontWeight.Medium)
                     } else {
                         daysLeft?.let {
                             Text(
@@ -327,7 +328,7 @@ private fun GoalCard(
                 var menuExpanded by remember { mutableStateOf(false) }
                 Box {
                     IconButton(onClick = { menuExpanded = true }, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Default.MoreVert, null, tint = Color(0xFF9CA3AF), modifier = Modifier.size(18.dp))
+                        Icon(Icons.Default.MoreVert, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(18.dp))
                     }
                     DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
                         DropdownMenuItem(
@@ -351,11 +352,11 @@ private fun GoalCard(
             // ── Amount display ─────────────────────────────────────
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Column {
-                    Text("Saved", fontSize = 11.sp, color = Color(0xFF9CA3AF))
-                    Text(fmtGoal(goal.currentAmount), fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color(0xFF059669))
+                    Text("Saved", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(fmtGoal(goal.currentAmount), fontWeight = FontWeight.Bold, fontSize = 18.sp, color = AppColors.incomeText)
                 }
                 Column(horizontalAlignment = Alignment.End) {
-                    Text("Target", fontSize = 11.sp, color = Color(0xFF9CA3AF))
+                    Text("Target", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(fmtGoal(goal.targetAmount), fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 }
             }
@@ -381,7 +382,7 @@ private fun GoalCard(
                     Text(
                         "${fmtGoal(remaining)} to go",
                         fontSize = 12.sp,
-                        color = Color(0xFF6B7280)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -417,7 +418,7 @@ private fun GoalProgressBar(pct: Float, color: Color) {
             .fillMaxWidth()
             .height(10.dp)
             .clip(RoundedCornerShape(5.dp))
-            .background(Color(0xFFE5E7EB))
+            .background(MaterialTheme.colorScheme.outline)
     ) {
         Box(
             modifier = Modifier
@@ -454,14 +455,14 @@ private fun GoalFormDialog(
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
 
                 // Icon picker
-                Text("Pick an icon", fontSize = 12.sp, color = Color(0xFF6B7280))
+                Text("Pick an icon", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(icons) { icon ->
                         Box(
                             modifier = Modifier
                                 .size(40.dp)
                                 .background(
-                                    if (selectedIcon == icon) Color(0xFFEFF6FF) else Color(0xFFF9FAFB),
+                                    if (selectedIcon == icon) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface,
                                     RoundedCornerShape(10.dp)
                                 )
                                 .border(
@@ -488,7 +489,7 @@ private fun GoalFormDialog(
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color(0xFF2563EB),
-                        unfocusedBorderColor = Color(0xFFE5E7EB)
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
                     )
                 )
 
@@ -503,7 +504,7 @@ private fun GoalFormDialog(
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color(0xFF2563EB),
-                        unfocusedBorderColor = Color(0xFFE5E7EB)
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
                     )
                 )
 
@@ -521,7 +522,7 @@ private fun GoalFormDialog(
                         onClick = { deadline = "" },
                         contentPadding = PaddingValues(0.dp)
                     ) {
-                        Text("Clear deadline", color = Color(0xFF6B7280), fontSize = 12.sp)
+                        Text("Clear deadline", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                     }
                 }
             }
@@ -584,7 +585,7 @@ private fun ContributeDialog(
                 Text(
                     "${fmtGoal(goal.currentAmount)} saved of ${fmtGoal(goal.targetAmount)} · $pct%",
                     fontSize = 13.sp,
-                    color = Color(0xFF6B7280)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 // Quick amount chips
@@ -609,7 +610,7 @@ private fun ContributeDialog(
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color(0xFF2563EB),
-                        unfocusedBorderColor = Color(0xFFE5E7EB)
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
                     )
                 )
 

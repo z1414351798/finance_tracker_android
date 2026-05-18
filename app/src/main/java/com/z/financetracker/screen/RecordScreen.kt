@@ -136,14 +136,14 @@ fun RecordScreen(onSuccess: () -> Unit) {
                 onClick = { selectedType = TraType.EXPENSE },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (selectedType == TraType.EXPENSE) Color(0xFFEF4444) else Color.LightGray)
+                    containerColor = if (selectedType == TraType.EXPENSE) Color(0xFFEF4444) else MaterialTheme.colorScheme.surfaceVariant)
             ) { Text(stringResource(R.string.expense)) }
             Spacer(Modifier.width(8.dp))
             Button(
                 onClick = { selectedType = TraType.INCOME },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (selectedType == TraType.INCOME) Color(0xFF10B981) else Color.LightGray)
+                    containerColor = if (selectedType == TraType.INCOME) Color(0xFF10B981) else MaterialTheme.colorScheme.surfaceVariant)
             ) { Text(stringResource(R.string.income)) }
         }
 
@@ -174,7 +174,7 @@ fun RecordScreen(onSuccess: () -> Unit) {
                     Icon(
                         Icons.Default.CalendarToday,
                         contentDescription = null,
-                        tint = Color(0xFF6B7280),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(Modifier.width(10.dp))
@@ -182,7 +182,7 @@ fun RecordScreen(onSuccess: () -> Unit) {
                         text = displayFormatter.format(selectedDate.time),
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFF374151)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
                 Icon(
@@ -266,15 +266,15 @@ fun RecordScreen(onSuccess: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(100.dp)
-                    .background(Color(0xFFF1F5F9), RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp))
                     .clickable { imagePickerLauncher.launch("image/*") },
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(Icons.Default.PhotoCamera, null,
-                        tint = Color(0xFF9CA3AF), modifier = Modifier.size(32.dp))
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(32.dp))
                     Spacer(Modifier.height(4.dp))
-                    Text(stringResource(R.string.tap_attach_receipt), color = Color(0xFF9CA3AF), fontSize = 13.sp)
+                    Text(stringResource(R.string.tap_attach_receipt), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
                     Text(stringResource(R.string.stored_privately), color = Color(0xFFBBBFCA), fontSize = 11.sp)
                 }
             }

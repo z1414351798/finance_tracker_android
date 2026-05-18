@@ -44,6 +44,7 @@ import java.util.Locale
 import kotlinx.coroutines.launch
 import androidx.compose.ui.res.stringResource
 import com.z.financetracker.R
+import com.z.financetracker.ui.theme.AppColors
 
 @Composable
 fun SkylineScreen(onAddRecord: () -> Unit = {}) {
@@ -86,7 +87,7 @@ fun SkylineScreen(onAddRecord: () -> Unit = {}) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF8FAFC))
+                .background(MaterialTheme.colorScheme.background)
                 .verticalScroll(rememberScrollState())
         ) {
             ShimmerCard(modifier = Modifier.height(160.dp).padding(0.dp))
@@ -101,7 +102,7 @@ fun SkylineScreen(onAddRecord: () -> Unit = {}) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8FAFC))
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(scrollState)
     ) {
         // ── Balance Hero Card ──────────────────────────────────────
@@ -197,7 +198,7 @@ fun SkylineScreen(onAddRecord: () -> Unit = {}) {
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp)
                     .background(
-                        if (overdueCount > 0) Color(0xFFFEF2F2) else Color(0xFFFFFBEB),
+                        if (overdueCount > 0) AppColors.errorBackground else AppColors.warningBackground,
                         RoundedCornerShape(14.dp)
                     )
                     .padding(horizontal = 14.dp, vertical = 12.dp),
@@ -238,7 +239,7 @@ fun SkylineScreen(onAddRecord: () -> Unit = {}) {
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                     shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     elevation = CardDefaults.cardElevation(2.dp)
                 ) {
                     Column(Modifier.padding(16.dp)) {
@@ -261,7 +262,7 @@ fun SkylineScreen(onAddRecord: () -> Unit = {}) {
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                     shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     elevation = CardDefaults.cardElevation(2.dp)
                 ) {
                     Column(Modifier.padding(16.dp)) {
@@ -292,7 +293,7 @@ fun SkylineScreen(onAddRecord: () -> Unit = {}) {
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                     shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     elevation = CardDefaults.cardElevation(2.dp)
                 ) {
                     Column(Modifier.padding(16.dp)) {
@@ -302,7 +303,7 @@ fun SkylineScreen(onAddRecord: () -> Unit = {}) {
                             StaggeredItem(index = index) {
                                 TransactionRow(tx)
                                 if (tx != recentTransactions.last()) {
-                                    HorizontalDivider(color = Color(0xFFF1F5F9))
+                                    HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
                                 }
                             }
                         }
@@ -386,12 +387,12 @@ private fun CategoryBar(name: String, amount: Double, total: Double, color: Colo
             Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(name, fontSize = 13.sp, color = Color(0xFF374151))
+            Text(name, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
             Text(
                 formatCurrency(amount),
                 fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF111827)
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
         Spacer(Modifier.height(4.dp))
@@ -399,7 +400,7 @@ private fun CategoryBar(name: String, amount: Double, total: Double, color: Colo
             modifier = Modifier
                 .fillMaxWidth()
                 .height(6.dp)
-                .background(Color(0xFFF1F5F9), RoundedCornerShape(3.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(3.dp))
         ) {
             Box(
                 modifier = Modifier
@@ -424,7 +425,7 @@ private fun TransactionRow(tx: Transaction) {
             modifier = Modifier
                 .size(40.dp)
                 .background(
-                    if (isIncome) Color(0xFFD1FAE5) else Color(0xFFFEE2E2),
+                    if (isIncome) AppColors.incomeBackground else AppColors.expensBackground,
                     RoundedCornerShape(10.dp)
                 ),
             contentAlignment = Alignment.Center
@@ -432,7 +433,7 @@ private fun TransactionRow(tx: Transaction) {
             Icon(
                 imageVector = if (isIncome) Icons.Default.ArrowUpward else Icons.Default.ArrowDownward,
                 contentDescription = null,
-                tint = if (isIncome) Color(0xFF059669) else Color(0xFFDC2626),
+                tint = if (isIncome) AppColors.incomeText else AppColors.expenseText,
                 modifier = Modifier.size(18.dp)
             )
         }
@@ -448,14 +449,14 @@ private fun TransactionRow(tx: Transaction) {
             Text(
                 tx.categoryName ?: tx.date,
                 fontSize = 12.sp,
-                color = Color(0xFF9CA3AF)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         Text(
             "${if (isIncome) "+" else "-"}${formatCurrency(Math.abs(tx.amount))}",
             fontWeight = FontWeight.Bold,
             fontSize = 14.sp,
-            color = if (isIncome) Color(0xFF059669) else Color(0xFFDC2626)
+            color = if (isIncome) AppColors.incomeText else AppColors.expenseText
         )
     }
 }

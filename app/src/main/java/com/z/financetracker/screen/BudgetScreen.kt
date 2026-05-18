@@ -19,6 +19,7 @@ import com.z.financetracker.client.NetworkClient
 import com.z.financetracker.entity.Category
 import com.z.financetracker.enums.TraType
 import com.z.financetracker.util.Budget
+import com.z.financetracker.ui.theme.AppColors
 import com.z.financetracker.util.BudgetManager
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -69,7 +70,7 @@ fun BudgetScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8FAFC))
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(scrollState)
             .padding(16.dp)
     ) {
@@ -101,9 +102,9 @@ fun BudgetScreen() {
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
                 containerColor = when {
-                    overallPct >= 1f -> Color(0xFFFEF2F2)
-                    overallPct >= 0.8f -> Color(0xFFFFFBEB)
-                    else -> Color(0xFFEFF6FF)
+                    overallPct >= 1f -> AppColors.errorBackground
+                    overallPct >= 0.8f -> AppColors.warningBackground
+                    else -> MaterialTheme.colorScheme.surfaceVariant
                 }
             ),
             elevation = CardDefaults.cardElevation(0.dp)
@@ -129,7 +130,7 @@ fun BudgetScreen() {
                 Text(
                     "${(overallPct * 100).toInt()}% of total budget used",
                     fontSize = 12.sp,
-                    color = Color(0xFF6B7280)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -148,11 +149,11 @@ fun BudgetScreen() {
                     Icon(
                         Icons.Default.AccountBalanceWallet,
                         null,
-                        tint = Color(0xFFD1D5DB),
+                        tint = MaterialTheme.colorScheme.outlineVariant,
                         modifier = Modifier.size(64.dp)
                     )
                     Spacer(Modifier.height(8.dp))
-                    Text("No budgets set yet", color = Color(0xFF9CA3AF))
+                    Text("No budgets set yet", color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(Modifier.height(4.dp))
                     TextButton(onClick = { showAddDialog = true }) {
                         Text("Add your first budget", color = Color(0xFF2563EB))
@@ -192,7 +193,7 @@ fun BudgetScreen() {
 @Composable
 private fun BudgetStat(label: String, amount: Double, color: Color) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(label, fontSize = 11.sp, color = Color(0xFF6B7280))
+        Text(label, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(Modifier.height(2.dp))
         Text(
             fmtBudget(amount),
@@ -219,7 +220,7 @@ private fun BudgetProgressBar(pct: Float) {
             .fillMaxWidth()
             .height(8.dp)
             .clip(RoundedCornerShape(4.dp))
-            .background(Color(0xFFE5E7EB))
+            .background(MaterialTheme.colorScheme.outline)
     ) {
         Box(
             modifier = Modifier
@@ -240,7 +241,7 @@ private fun BudgetCategoryCard(budget: Budget, spent: Double, onDelete: () -> Un
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Column(Modifier.padding(16.dp)) {
@@ -262,7 +263,7 @@ private fun BudgetCategoryCard(budget: Budget, spent: Double, onDelete: () -> Un
                         budget.categoryName,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 15.sp,
-                        color = if (isOver) Color(0xFFDC2626) else Color(0xFF111827)
+                        color = if (isOver) Color(0xFFDC2626) else MaterialTheme.colorScheme.onBackground
                     )
                 }
                 IconButton(
@@ -271,7 +272,7 @@ private fun BudgetCategoryCard(budget: Budget, spent: Double, onDelete: () -> Un
                 ) {
                     Icon(
                         Icons.Default.Delete, null,
-                        tint = Color(0xFFD1D5DB),
+                        tint = MaterialTheme.colorScheme.outlineVariant,
                         modifier = Modifier.size(16.dp)
                     )
                 }
@@ -288,7 +289,7 @@ private fun BudgetCategoryCard(budget: Budget, spent: Double, onDelete: () -> Un
                 Text(
                     "${fmtBudget(spent)} spent",
                     fontSize = 12.sp,
-                    color = Color(0xFF6B7280)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     if (isOver) "${fmtBudget(-remaining)} over"
@@ -305,7 +306,7 @@ private fun BudgetCategoryCard(budget: Budget, spent: Double, onDelete: () -> Un
             Text(
                 "of ${fmtBudget(budget.limit)} budget",
                 fontSize = 11.sp,
-                color = Color(0xFF9CA3AF)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -346,7 +347,7 @@ private fun AddBudgetDialog(
                         shape = RoundedCornerShape(10.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color(0xFF2563EB),
-                            unfocusedBorderColor = Color(0xFFE5E7EB)
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline
                         )
                     )
                     ExposedDropdownMenu(
@@ -355,7 +356,7 @@ private fun AddBudgetDialog(
                     ) {
                         if (availableCategories.isEmpty()) {
                             DropdownMenuItem(
-                                text = { Text("All categories have budgets", color = Color(0xFF9CA3AF)) },
+                                text = { Text("All categories have budgets", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                                 onClick = { expanded = false }
                             )
                         } else {
@@ -378,7 +379,7 @@ private fun AddBudgetDialog(
                     shape = RoundedCornerShape(10.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color(0xFF2563EB),
-                        unfocusedBorderColor = Color(0xFFE5E7EB)
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
                     )
                 )
             }

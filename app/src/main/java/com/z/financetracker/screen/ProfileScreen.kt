@@ -29,6 +29,7 @@ import com.z.financetracker.R
 import com.z.financetracker.client.NetworkClient
 import com.z.financetracker.component.LanguageSwitcher
 import com.z.financetracker.entity.User
+import com.z.financetracker.ui.theme.AppColors
 import com.z.financetracker.util.TokenManager
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -133,7 +134,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        containerColor = Color(0xFFF8FAFC)
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         if (isLoading) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -252,7 +253,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(4.dp)
             ) {
                 Column(Modifier.padding(20.dp)) {
@@ -301,7 +302,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
                                 shape = RoundedCornerShape(12.dp),
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedBorderColor = Color(0xFF2563EB),
-                                    unfocusedBorderColor = Color(0xFFE5E7EB)
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
                                 )
                             )
                         } else {
@@ -366,7 +367,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(4.dp)
             ) {
                 Row(
@@ -409,7 +410,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(4.dp)
             ) {
                 Column(Modifier.padding(20.dp)) {
@@ -434,7 +435,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
                             if (showPasswordSection) Icons.Default.KeyboardArrowUp
                             else Icons.Default.KeyboardArrowDown,
                             null,
-                            tint = Color(0xFF9CA3AF)
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
@@ -555,7 +556,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(4.dp)
             ) {
                 Column {
@@ -572,7 +573,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
                             Icon(
                                 Icons.Default.OpenInNew,
                                 contentDescription = null,
-                                tint = Color(0xFF9CA3AF)
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         },
                         modifier = Modifier.clickable {
@@ -593,7 +594,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
                             Icon(
                                 Icons.Default.OpenInNew,
                                 contentDescription = null,
-                                tint = Color(0xFF9CA3AF)
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         },
                         modifier = Modifier.clickable {
@@ -611,7 +612,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(4.dp)
             ) {
                 Row(
@@ -627,7 +628,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
                     Box(
                         modifier = Modifier
                             .size(40.dp)
-                            .background(Color(0xFFFEE2E2), RoundedCornerShape(10.dp)),
+                            .background(AppColors.expensBackground, RoundedCornerShape(10.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -754,15 +755,15 @@ private fun ProfileField(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFFF8FAFC), RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(12.dp))
             .padding(horizontal = 14.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(icon, null, tint = Color(0xFF2563EB), modifier = Modifier.size(20.dp))
         Spacer(Modifier.width(12.dp))
         Column {
-            Text(label, fontSize = 11.sp, color = Color(0xFF9CA3AF))
-            Text(value, fontSize = 14.sp, fontWeight = FontWeight.Medium, color = Color(0xFF111827))
+            Text(label, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(value, fontSize = 14.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onBackground)
         }
     }
 }
@@ -786,7 +787,7 @@ private fun PasswordField(
                 Icon(
                     if (showPassword) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                     null,
-                    tint = Color(0xFF9CA3AF)
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         },
@@ -798,8 +799,8 @@ private fun PasswordField(
         shape = RoundedCornerShape(12.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = Color(0xFF2563EB),
-            unfocusedBorderColor = Color(0xFFE5E7EB),
-            errorBorderColor = Color(0xFFDC2626)
+            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+            errorBorderColor = Color(0xFFEF4444)
         )
     )
 }
@@ -820,7 +821,7 @@ private fun PasswordStrengthBar(password: String) {
         3 -> stringResource(R.string.strength_strong) to Color(0xFF059669)
         2 -> stringResource(R.string.strength_medium) to Color(0xFFF59E0B)
         1 -> stringResource(R.string.strength_weak) to Color(0xFFEF4444)
-        else -> stringResource(R.string.strength_too_short) to Color(0xFFD1D5DB)
+        else -> stringResource(R.string.strength_too_short) to MaterialTheme.colorScheme.outlineVariant
     }
 
     Column {
@@ -831,7 +832,7 @@ private fun PasswordStrengthBar(password: String) {
                         .weight(1f)
                         .height(4.dp)
                         .background(
-                            if (i < strength) color else Color(0xFFE5E7EB),
+                            if (i < strength) color else MaterialTheme.colorScheme.outline,
                             RoundedCornerShape(2.dp)
                         )
                 )

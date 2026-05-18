@@ -37,6 +37,7 @@ import com.z.financetracker.component.rememberToastState
 import com.z.financetracker.entity.Category
 import com.z.financetracker.entity.Transaction
 import com.z.financetracker.enums.TraType
+import com.z.financetracker.ui.theme.AppColors
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.*
@@ -153,7 +154,7 @@ fun HistoryScreen() {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0xFFF8FAFC))
+                    .background(MaterialTheme.colorScheme.background)
             ) {
             // ── Search + Filter Bar ────────────────────────────────
             // Wrap in verticalScroll so filter panel can expand
@@ -161,7 +162,7 @@ fun HistoryScreen() {
             val filterScrollState = rememberScrollState()
 
             Surface(
-                color = Color.White,
+                color = MaterialTheme.colorScheme.surface,
                 shadowElevation = 2.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -175,13 +176,13 @@ fun HistoryScreen() {
                     OutlinedTextField(
                         value = searchText,
                         onValueChange = { searchText = it },
-                        placeholder = { Text(stringResource(R.string.search_by_name), color = Color(0xFF9CA3AF)) },
-                        leadingIcon = { Icon(Icons.Default.Search, null, tint = Color(0xFF9CA3AF)) },
+                        placeholder = { Text(stringResource(R.string.search_by_name), color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                        leadingIcon = { Icon(Icons.Default.Search, null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
                         trailingIcon = {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 if (searchText.isNotEmpty()) {
                                     IconButton(onClick = { searchText = ""; loadPage(true) }) {
-                                        Icon(Icons.Default.Close, null, tint = Color(0xFF9CA3AF))
+                                        Icon(Icons.Default.Close, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                                     }
                                 }
                                 Box {
@@ -189,14 +190,14 @@ fun HistoryScreen() {
                                         Icon(
                                             Icons.Default.FilterList, null,
                                             tint = if (activeFilterCount > 0 || showFilters)
-                                                Color(0xFF2563EB) else Color(0xFF9CA3AF)
+                                                Color(0xFF2563EB) else MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
                                     if (activeFilterCount > 0) {
                                         Box(
                                             modifier = Modifier
                                                 .size(16.dp)
-                                                .background(Color(0xFFEF4444), RoundedCornerShape(8.dp))
+                                                .background(AppColors.expenseText, RoundedCornerShape(8.dp))
                                                 .align(Alignment.TopEnd),
                                             contentAlignment = Alignment.Center
                                         ) {
@@ -216,14 +217,14 @@ fun HistoryScreen() {
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color(0xFF2563EB),
-                            unfocusedBorderColor = Color(0xFFE5E7EB)
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline
                         )
                     )
 
                     // ── Filter Panel ───────────────────────────────
                     AnimatedVisibility(visible = showFilters) {
                         Column(Modifier.padding(top = 12.dp)) {
-                            Text(stringResource(R.string.type_label), fontSize = 12.sp, color = Color(0xFF6B7280), fontWeight = FontWeight.Medium)
+                            Text(stringResource(R.string.type_label), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
                             Spacer(Modifier.height(4.dp))
                             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 TypeChip(stringResource(R.string.all), selectedType == null) { selectedType = null }
@@ -236,7 +237,7 @@ fun HistoryScreen() {
                             }
 
                             Spacer(Modifier.height(12.dp))
-                            Text(stringResource(R.string.date_range), fontSize = 12.sp, color = Color(0xFF6B7280), fontWeight = FontWeight.Medium)
+                            Text(stringResource(R.string.date_range), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
                             Spacer(Modifier.height(4.dp))
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 DatePickerField(stringResource(R.string.from_date), startDate, { startDate = it }, Modifier.weight(1f))
@@ -244,12 +245,12 @@ fun HistoryScreen() {
                             }
                             if (startDate.isNotBlank() || endDate.isNotBlank()) {
                                 TextButton(onClick = { startDate = ""; endDate = "" }, contentPadding = PaddingValues(0.dp)) {
-                                    Text(stringResource(R.string.clear_dates), color = Color(0xFF6B7280), fontSize = 12.sp)
+                                    Text(stringResource(R.string.clear_dates), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                                 }
                             }
 
                             Spacer(Modifier.height(12.dp))
-                            Text(stringResource(R.string.amount_range), fontSize = 12.sp, color = Color(0xFF6B7280), fontWeight = FontWeight.Medium)
+                            Text(stringResource(R.string.amount_range), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
                             Spacer(Modifier.height(4.dp))
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 OutlinedTextField(
@@ -258,7 +259,7 @@ fun HistoryScreen() {
                                     singleLine = true, shape = RoundedCornerShape(10.dp),
                                     colors = OutlinedTextFieldDefaults.colors(
                                         focusedBorderColor = Color(0xFF2563EB),
-                                        unfocusedBorderColor = Color(0xFFE5E7EB)
+                                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
                                     )
                                 )
                                 OutlinedTextField(
@@ -267,28 +268,28 @@ fun HistoryScreen() {
                                     singleLine = true, shape = RoundedCornerShape(10.dp),
                                     colors = OutlinedTextFieldDefaults.colors(
                                         focusedBorderColor = Color(0xFF2563EB),
-                                        unfocusedBorderColor = Color(0xFFE5E7EB)
+                                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
                                     )
                                 )
                             }
 
                             Spacer(Modifier.height(12.dp))
-                            Text(stringResource(R.string.note_label), fontSize = 12.sp, color = Color(0xFF6B7280), fontWeight = FontWeight.Medium)
+                            Text(stringResource(R.string.note_label), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
                             Spacer(Modifier.height(4.dp))
                             OutlinedTextField(
                                 value = noteText, onValueChange = { noteText = it },
-                                placeholder = { Text(stringResource(R.string.search_in_notes), color = Color(0xFF9CA3AF)) },
+                                placeholder = { Text(stringResource(R.string.search_in_notes), color = MaterialTheme.colorScheme.onSurfaceVariant) },
                                 modifier = Modifier.fillMaxWidth(), singleLine = true,
                                 shape = RoundedCornerShape(10.dp),
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedBorderColor = Color(0xFF2563EB),
-                                    unfocusedBorderColor = Color(0xFFE5E7EB)
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
                                 )
                             )
 
                             if (categories.isNotEmpty()) {
                                 Spacer(Modifier.height(12.dp))
-                                Text(stringResource(R.string.category_label), fontSize = 12.sp, color = Color(0xFF6B7280), fontWeight = FontWeight.Medium)
+                                Text(stringResource(R.string.category_label), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
                                 Spacer(Modifier.height(4.dp))
                                 FlowRow(
                                     modifier = Modifier.fillMaxWidth(),
@@ -399,7 +400,7 @@ fun HistoryScreen() {
                 ) {
                     Text(
                         stringResource(R.string.transactions_count, totalElements),
-                        fontSize = 12.sp, color = Color(0xFF6B7280)
+                        fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     // Export CSV button
                     TextButton(
@@ -439,18 +440,18 @@ fun HistoryScreen() {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(14.dp),
                                 strokeWidth = 2.dp,
-                                color = Color(0xFF059669)
+                                color = AppColors.incomeText
                             )
                         } else {
                             Icon(Icons.Default.Share, null,
-                                tint = Color(0xFF059669),
+                                tint = AppColors.incomeText,
                                 modifier = Modifier.size(14.dp))
                         }
                         Spacer(Modifier.width(4.dp))
                         Text(
                             stringResource(R.string.export_csv),
                             fontSize = 12.sp,
-                            color = Color(0xFF059669),
+                            color = AppColors.incomeText,
                             fontWeight = FontWeight.SemiBold
                         )
                     }
@@ -465,9 +466,9 @@ fun HistoryScreen() {
             } else if (transactions.isEmpty()) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Default.SearchOff, null, tint = Color(0xFFD1D5DB), modifier = Modifier.size(64.dp))
+                        Icon(Icons.Default.SearchOff, null, tint = MaterialTheme.colorScheme.outlineVariant, modifier = Modifier.size(64.dp))
                         Spacer(Modifier.height(8.dp))
-                        Text(stringResource(R.string.no_transactions), color = Color(0xFF9CA3AF))
+                        Text(stringResource(R.string.no_transactions), color = MaterialTheme.colorScheme.onSurfaceVariant)
                         if (activeFilterCount > 0) {
                             Spacer(Modifier.height(8.dp))
                             TextButton(onClick = { clearAllFilters() }) {
@@ -527,7 +528,7 @@ fun HistoryScreen() {
             onDismissRequest = { showEditSheet = false; editingTransaction = null },
             sheetState = editSheetState,
             shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.surface
         ) {
             EditTransactionSheet(
                 transaction = editingTransaction!!,
@@ -561,7 +562,7 @@ fun HistoryScreen() {
             text = {
                 Text(
                     "\"${tx.text}\" will be permanently deleted.",
-                    color = Color(0xFF6B7280)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             confirmButton = {
@@ -584,7 +585,7 @@ fun HistoryScreen() {
                             }
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFDC2626))
+                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.expenseText)
                 ) { Text(stringResource(R.string.delete)) }
             },
             dismissButton = {
@@ -602,7 +603,7 @@ fun HistoryScreen() {
             },
             sheetState = detailSheetState,
             shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp),
-            containerColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.surface,
             dragHandle = null
         ) {
             TransactionDetailScreen(
@@ -641,7 +642,7 @@ fun HistoryScreen() {
 private fun ActiveFilterChip(label: String, onRemove: () -> Unit) {
     Box(
         modifier = Modifier
-            .background(Color(0xFFEFF6FF), RoundedCornerShape(20.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(20.dp))
             .padding(start = 10.dp, end = 4.dp, top = 4.dp, bottom = 4.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -678,7 +679,7 @@ private fun TappableTransactionCard(tx: Transaction, onClick: () -> Unit) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(2.dp)
             ) {
                 Row(
@@ -689,7 +690,7 @@ private fun TappableTransactionCard(tx: Transaction, onClick: () -> Unit) {
                         modifier = Modifier
                             .size(46.dp)
                             .background(
-                                if (isIncome) Color(0xFFD1FAE5) else Color(0xFFFEE2E2),
+                                if (isIncome) AppColors.incomeBackground else AppColors.expensBackground,
                                 RoundedCornerShape(13.dp)
                             ),
                         contentAlignment = Alignment.Center
@@ -697,7 +698,7 @@ private fun TappableTransactionCard(tx: Transaction, onClick: () -> Unit) {
                         Icon(
                             if (isIncome) Icons.Default.ArrowUpward else Icons.Default.ArrowDownward,
                             null,
-                            tint = if (isIncome) Color(0xFF059669) else Color(0xFFDC2626),
+                            tint = if (isIncome) AppColors.incomeText else AppColors.expenseText,
                             modifier = Modifier.size(22.dp)
                         )
                     }
@@ -709,24 +710,24 @@ private fun TappableTransactionCard(tx: Transaction, onClick: () -> Unit) {
                         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                             if (!tx.categoryName.isNullOrBlank()) {
                                 Box(
-                                    Modifier.background(Color(0xFFEFF6FF), RoundedCornerShape(4.dp))
+                                    Modifier.background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(4.dp))
                                         .padding(horizontal = 6.dp, vertical = 2.dp)
                                 ) {
                                     Text(tx.categoryName, fontSize = 10.sp, color = Color(0xFF2563EB),
                                         fontWeight = FontWeight.Medium)
                                 }
                             }
-                            Text(tx.date, fontSize = 11.sp, color = Color(0xFF9CA3AF))
+                            Text(tx.date, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                     Column(horizontalAlignment = Alignment.End) {
                         Text(
                             "${if (isIncome) "+" else "-"}${fmtAmt(tx.amount.absoluteValue)}",
                             fontWeight = FontWeight.Bold, fontSize = 14.sp,
-                            color = if (isIncome) Color(0xFF059669) else Color(0xFFDC2626)
+                            color = if (isIncome) AppColors.incomeText else AppColors.expenseText
                         )
                         Spacer(Modifier.height(2.dp))
-                        Text("tap to flip", fontSize = 9.sp, color = Color(0xFFD1D5DB))
+                        Text("tap to flip", fontSize = 9.sp, color = MaterialTheme.colorScheme.outlineVariant)
                     }
                 }
             }
@@ -811,7 +812,7 @@ private fun HistoryTransactionCard(tx: Transaction, modifier: Modifier = Modifie
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(1.dp)
     ) {
         Row(
@@ -822,7 +823,7 @@ private fun HistoryTransactionCard(tx: Transaction, modifier: Modifier = Modifie
                 modifier = Modifier
                     .size(44.dp)
                     .background(
-                        if (isIncome) Color(0xFFD1FAE5) else Color(0xFFFEE2E2),
+                        if (isIncome) AppColors.incomeBackground else AppColors.expensBackground,
                         RoundedCornerShape(12.dp)
                     ),
                 contentAlignment = Alignment.Center
@@ -830,7 +831,7 @@ private fun HistoryTransactionCard(tx: Transaction, modifier: Modifier = Modifie
                 Icon(
                     if (isIncome) Icons.Default.ArrowUpward else Icons.Default.ArrowDownward,
                     null,
-                    tint = if (isIncome) Color(0xFF059669) else Color(0xFFDC2626),
+                    tint = if (isIncome) AppColors.incomeText else AppColors.expenseText,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -845,17 +846,17 @@ private fun HistoryTransactionCard(tx: Transaction, modifier: Modifier = Modifie
                     if (!tx.categoryName.isNullOrBlank()) {
                         Box(
                             modifier = Modifier
-                                .background(Color(0xFFEFF6FF), RoundedCornerShape(4.dp))
+                                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(4.dp))
                                 .padding(horizontal = 6.dp, vertical = 2.dp)
                         ) {
                             Text(tx.categoryName, fontSize = 10.sp, color = Color(0xFF2563EB), fontWeight = FontWeight.Medium)
                         }
                     }
-                    Text(tx.date, fontSize = 11.sp, color = Color(0xFF9CA3AF))
+                    Text(tx.date, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 if (!tx.note.isNullOrBlank()) {
                     Text(
-                        tx.note, fontSize = 11.sp, color = Color(0xFF6B7280),
+                        tx.note, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1, overflow = TextOverflow.Ellipsis
                     )
                 }
@@ -864,7 +865,7 @@ private fun HistoryTransactionCard(tx: Transaction, modifier: Modifier = Modifie
             Text(
                 "${if (isIncome) "+" else "-"}${fmtAmt(tx.amount.absoluteValue)}",
                 fontWeight = FontWeight.Bold, fontSize = 14.sp,
-                color = if (isIncome) Color(0xFF059669) else Color(0xFFDC2626)
+                color = if (isIncome) AppColors.incomeText else AppColors.expenseText
             )
         }
     }
@@ -906,7 +907,7 @@ private fun EditTransactionSheet(
             .verticalScroll(rememberScrollState())
     ) {
         Box(Modifier.fillMaxWidth().padding(vertical = 12.dp), contentAlignment = Alignment.Center) {
-            Box(Modifier.size(width = 40.dp, height = 4.dp).background(Color(0xFFE5E7EB), RoundedCornerShape(2.dp)))
+            Box(Modifier.size(width = 40.dp, height = 4.dp).background(MaterialTheme.colorScheme.outline, RoundedCornerShape(2.dp)))
         }
 
         Text(stringResource(R.string.edit_transaction), fontWeight = FontWeight.Bold, fontSize = 18.sp)
@@ -918,20 +919,20 @@ private fun EditTransactionSheet(
                 onClick = { selectedType = TraType.EXPENSE },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (selectedType == TraType.EXPENSE) Color(0xFFEF4444) else Color(0xFFF1F5F9)
+                    containerColor = if (selectedType == TraType.EXPENSE) Color(0xFFEF4444) else MaterialTheme.colorScheme.surfaceVariant
                 )
             ) {
-                Text(stringResource(R.string.expense), color = if (selectedType == TraType.EXPENSE) Color.White else Color(0xFF6B7280))
+                Text(stringResource(R.string.expense), color = if (selectedType == TraType.EXPENSE) Color.White else MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Spacer(Modifier.width(8.dp))
             Button(
                 onClick = { selectedType = TraType.INCOME },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (selectedType == TraType.INCOME) Color(0xFF10B981) else Color(0xFFF1F5F9)
+                    containerColor = if (selectedType == TraType.INCOME) Color(0xFF10B981) else MaterialTheme.colorScheme.surfaceVariant
                 )
             ) {
-                Text(stringResource(R.string.income), color = if (selectedType == TraType.INCOME) Color.White else Color(0xFF6B7280))
+                Text(stringResource(R.string.income), color = if (selectedType == TraType.INCOME) Color.White else MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
 
@@ -943,7 +944,7 @@ private fun EditTransactionSheet(
             modifier = Modifier.fillMaxWidth(), singleLine = true,
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFF2563EB), unfocusedBorderColor = Color(0xFFE5E7EB)
+                focusedBorderColor = Color(0xFF2563EB), unfocusedBorderColor = MaterialTheme.colorScheme.outline
             )
         )
 
@@ -955,7 +956,7 @@ private fun EditTransactionSheet(
             modifier = Modifier.fillMaxWidth(), singleLine = true,
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFF2563EB), unfocusedBorderColor = Color(0xFFE5E7EB)
+                focusedBorderColor = Color(0xFF2563EB), unfocusedBorderColor = MaterialTheme.colorScheme.outline
             )
         )
 
@@ -971,7 +972,7 @@ private fun EditTransactionSheet(
             modifier = Modifier.fillMaxWidth(), maxLines = 3,
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFF2563EB), unfocusedBorderColor = Color(0xFFE5E7EB)
+                focusedBorderColor = Color(0xFF2563EB), unfocusedBorderColor = MaterialTheme.colorScheme.outline
             )
         )
 

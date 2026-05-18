@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
 import com.z.financetracker.client.NetworkClient
 import com.z.financetracker.entity.Transaction
+import com.z.financetracker.ui.theme.AppColors
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.time.LocalDate
@@ -69,13 +70,13 @@ fun SpendingCalendarScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8FAFC))
+            .background(MaterialTheme.colorScheme.background)
     ) {
         // ── Month navigator ────────────────────────────────────────────
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(horizontal = 16.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -84,9 +85,9 @@ fun SpendingCalendarScreen() {
                 onClick = { currentMonth = currentMonth.minusMonths(1) },
                 modifier = Modifier
                     .size(36.dp)
-                    .background(Color(0xFFF1F5F9), CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
             ) {
-                Icon(Icons.Default.ChevronLeft, null, tint = Color(0xFF374151),
+                Icon(Icons.Default.ChevronLeft, null, tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(20.dp))
             }
 
@@ -95,12 +96,12 @@ fun SpendingCalendarScreen() {
                     currentMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault()),
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
-                    color = Color(0xFF111827)
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
                     currentMonth.year.toString(),
                     fontSize = 12.sp,
-                    color = Color(0xFF9CA3AF)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -112,14 +113,14 @@ fun SpendingCalendarScreen() {
                 modifier = Modifier
                     .size(36.dp)
                     .background(
-                        if (currentMonth < YearMonth.now()) Color(0xFFF1F5F9) else Color.Transparent,
+                        if (currentMonth < YearMonth.now()) MaterialTheme.colorScheme.surfaceVariant else Color.Transparent,
                         CircleShape
                     )
             ) {
                 Icon(
                     Icons.Default.ChevronRight, null,
-                    tint = if (currentMonth < YearMonth.now()) Color(0xFF374151)
-                           else Color(0xFFD1D5DB),
+                    tint = if (currentMonth < YearMonth.now()) MaterialTheme.colorScheme.onSurface
+                           else MaterialTheme.colorScheme.outlineVariant,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -141,7 +142,7 @@ fun SpendingCalendarScreen() {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     elevation = CardDefaults.cardElevation(2.dp)
                 ) {
                     Column(Modifier.padding(16.dp)) {
@@ -175,7 +176,7 @@ fun SpendingCalendarScreen() {
             onDismissRequest = { selectedDate = null },
             sheetState       = sheetState,
             shape            = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-            containerColor   = Color.White
+            containerColor   = MaterialTheme.colorScheme.surface
         ) {
             DayDetailSheet(date = date, transactions = dayTxs)
         }
@@ -196,7 +197,7 @@ private fun DayOfWeekHeaders() {
                 textAlign   = androidx.compose.ui.text.style.TextAlign.Center,
                 fontSize    = 11.sp,
                 fontWeight  = FontWeight.Medium,
-                color       = Color(0xFF9CA3AF)
+                color       = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -274,8 +275,8 @@ private fun DayCell(
     )
 
     val bgColor = when {
-        isFuture        -> Color(0xFFF8FAFC)
-        animIntensity <= 0f -> Color(0xFFF1F5F9)
+        isFuture        -> MaterialTheme.colorScheme.background
+        animIntensity <= 0f -> MaterialTheme.colorScheme.surfaceVariant
         else -> lerp(Color(0xFFDBEAFE), Color(0xFF1E3A8A), animIntensity)
     }
 
@@ -316,7 +317,7 @@ private fun ColorLegend(maxExpense: Double) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text("Less", fontSize = 10.sp, color = Color(0xFF9CA3AF))
+        Text("Less", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Row(
             modifier = Modifier.weight(1f),
             horizontalArrangement = Arrangement.spacedBy(3.dp)
@@ -338,7 +339,7 @@ private fun ColorLegend(maxExpense: Double) {
         Text(
             if (maxExpense > 0) fmtCal(maxExpense) else "More",
             fontSize = 10.sp,
-            color    = Color(0xFF9CA3AF)
+            color    = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
@@ -360,7 +361,7 @@ private fun MonthSummaryCard(
     Card(
         modifier  = Modifier.fillMaxWidth(),
         shape     = RoundedCornerShape(20.dp),
-        colors    = CardDefaults.cardColors(containerColor = Color.White),
+        colors    = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Column(Modifier.padding(20.dp)) {
@@ -375,7 +376,7 @@ private fun MonthSummaryCard(
 
             if (busiestEntry != null && totalExpense > 0) {
                 Spacer(Modifier.height(14.dp))
-                HorizontalDivider(color = Color(0xFFF1F5F9))
+                HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
                 Spacer(Modifier.height(12.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -386,7 +387,7 @@ private fun MonthSummaryCard(
                     Text(
                         "Busiest day  •  ${fmtDate(busiestEntry.key)}  •  ${fmtCal(busiestEntry.value)}",
                         fontSize = 13.sp,
-                        color    = Color(0xFF374151),
+                        color    = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Medium
                     )
                 }
@@ -405,7 +406,7 @@ private fun SummaryStatBox(label: String, value: String, color: Color, modifier:
     ) {
         Text(value, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = color)
         Spacer(Modifier.height(2.dp))
-        Text(label, fontSize = 10.sp, color = Color(0xFF9CA3AF))
+        Text(label, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
@@ -426,7 +427,7 @@ private fun DayDetailSheet(date: LocalDate, transactions: List<Transaction>) {
     ) {
         // Handle
         Box(Modifier.fillMaxWidth().padding(vertical = 10.dp), contentAlignment = Alignment.Center) {
-            Box(Modifier.size(40.dp, 4.dp).background(Color(0xFFE5E7EB), CircleShape))
+            Box(Modifier.size(40.dp, 4.dp).background(MaterialTheme.colorScheme.outline, CircleShape))
         }
 
         Text(date.format(fmt), fontWeight = FontWeight.Bold, fontSize = 18.sp)
@@ -445,7 +446,7 @@ private fun DayDetailSheet(date: LocalDate, transactions: List<Transaction>) {
             Spacer(Modifier.height(16.dp))
         }
 
-        HorizontalDivider(color = Color(0xFFF1F5F9))
+        HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
         Spacer(Modifier.height(8.dp))
 
         if (transactions.isEmpty()) {
@@ -457,7 +458,7 @@ private fun DayDetailSheet(date: LocalDate, transactions: List<Transaction>) {
                     Text("✨", fontSize = 48.sp)
                     Spacer(Modifier.height(8.dp))
                     Text("No activity on this day",
-                        color = Color(0xFF9CA3AF), fontSize = 14.sp)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                 }
             }
         } else {
@@ -501,7 +502,7 @@ private fun DayTransactionRow(tx: Transaction) {
             modifier = Modifier
                 .size(38.dp)
                 .background(
-                    if (isIncome) Color(0xFFD1FAE5) else Color(0xFFFEE2E2),
+                    if (isIncome) AppColors.incomeBackground else AppColors.expensBackground,
                     RoundedCornerShape(10.dp)
                 ),
             contentAlignment = Alignment.Center
@@ -509,7 +510,7 @@ private fun DayTransactionRow(tx: Transaction) {
             Icon(
                 if (isIncome) Icons.Default.ArrowUpward else Icons.Default.ArrowDownward,
                 null,
-                tint = if (isIncome) Color(0xFF059669) else Color(0xFFDC2626),
+                tint = if (isIncome) AppColors.incomeText else AppColors.expenseText,
                 modifier = Modifier.size(18.dp)
             )
         }
@@ -518,14 +519,14 @@ private fun DayTransactionRow(tx: Transaction) {
             Text(tx.text, fontWeight = FontWeight.Medium, fontSize = 14.sp,
                 maxLines = 1, overflow = TextOverflow.Ellipsis)
             if (!tx.categoryName.isNullOrBlank()) {
-                Text(tx.categoryName, fontSize = 11.sp, color = Color(0xFF9CA3AF))
+                Text(tx.categoryName, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
         Text(
             "${if (isIncome) "+" else "-"}${fmtCal(abs(tx.amount))}",
             fontWeight = FontWeight.Bold,
             fontSize   = 14.sp,
-            color      = if (isIncome) Color(0xFF059669) else Color(0xFFDC2626)
+            color      = if (isIncome) AppColors.incomeText else AppColors.expenseText
         )
     }
 }

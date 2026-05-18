@@ -45,7 +45,7 @@ fun ConsentScreen(onAccepted: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8FAFC))
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(scrollState)
             .padding(horizontal = 24.dp, vertical = 48.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -72,7 +72,7 @@ fun ConsentScreen(onAccepted: () -> Unit) {
             text = stringResource(R.string.before_you_begin),
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF111827),
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center
         )
 
@@ -82,7 +82,7 @@ fun ConsentScreen(onAccepted: () -> Unit) {
         Text(
             text = stringResource(R.string.privacy_subtitle),
             fontSize = 15.sp,
-            color = Color(0xFF6B7280),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
 
@@ -92,7 +92,7 @@ fun ConsentScreen(onAccepted: () -> Unit) {
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(2.dp)
         ) {
             Column(modifier = Modifier.padding(vertical = 8.dp)) {
@@ -101,19 +101,19 @@ fun ConsentScreen(onAccepted: () -> Unit) {
                     iconTint = indigoColor,
                     text = stringResource(R.string.privacy_point_1)
                 )
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = Color(0xFFE5E7EB))
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = MaterialTheme.colorScheme.outline)
                 PrivacyFeatureRow(
                     icon = Icons.Default.VisibilityOff,
                     iconTint = indigoColor,
                     text = stringResource(R.string.privacy_point_2)
                 )
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = Color(0xFFE5E7EB))
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = MaterialTheme.colorScheme.outline)
                 PrivacyFeatureRow(
                     icon = Icons.Default.Delete,
                     iconTint = indigoColor,
                     text = stringResource(R.string.privacy_point_3)
                 )
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = Color(0xFFE5E7EB))
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = MaterialTheme.colorScheme.outline)
                 PrivacyFeatureRow(
                     icon = Icons.Default.Security,
                     iconTint = indigoColor,
@@ -146,7 +146,7 @@ fun ConsentScreen(onAccepted: () -> Unit) {
 
             Text(
                 text = "  |  ",
-                color = Color(0xFF9CA3AF),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
 
@@ -182,7 +182,7 @@ fun ConsentScreen(onAccepted: () -> Unit) {
             Text(
                 text = stringResource(R.string.privacy_agree_checkbox),
                 fontSize = 13.sp,
-                color = Color(0xFF374151),
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -243,7 +243,7 @@ private fun PrivacyFeatureRow(
         Text(
             text = text,
             fontSize = 14.sp,
-            color = Color(0xFF374151),
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(1f)
         )
     }

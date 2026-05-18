@@ -25,6 +25,7 @@ import com.z.financetracker.api.CategorySummary
 import com.z.financetracker.api.TrendPoint
 import com.z.financetracker.client.NetworkClient
 import com.z.financetracker.enums.TraType
+import com.z.financetracker.ui.theme.AppColors
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
@@ -83,7 +84,7 @@ fun AnalyticsScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8FAFC))
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(scrollState)
             .padding(16.dp)
     ) {
@@ -93,7 +94,7 @@ fun AnalyticsScreen() {
         // ── Range Selector ─────────────────────────────────────────
         Card(
             shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(1.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -120,7 +121,7 @@ fun AnalyticsScreen() {
                     ) {
                         Text(
                             label,
-                            color = if (selectedRange == key) Color.White else Color(0xFF6B7280),
+                            color = if (selectedRange == key) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 13.sp,
                             fontWeight = if (selectedRange == key) FontWeight.Bold else FontWeight.Normal
                         )
@@ -177,7 +178,7 @@ private fun TrendChartCard(title: String, trends: List<TrendPoint>, color: Color
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Column(Modifier.padding(16.dp)) {
@@ -191,7 +192,7 @@ private fun TrendChartCard(title: String, trends: List<TrendPoint>, color: Color
                         .height(120.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("No data", color = Color(0xFF9CA3AF))
+                    Text("No data", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 return@Column
             }
@@ -200,7 +201,7 @@ private fun TrendChartCard(title: String, trends: List<TrendPoint>, color: Color
             Text(
                 "Peak: ${fmtAnalytics(maxVal)}",
                 fontSize = 11.sp,
-                color = Color(0xFF6B7280)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(Modifier.height(8.dp))
 
@@ -253,7 +254,7 @@ private fun TrendChartCard(title: String, trends: List<TrendPoint>, color: Color
                         Text(
                             pt.timeLabel.takeLast(5),
                             fontSize = 9.sp,
-                            color = Color(0xFF9CA3AF)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -301,7 +302,7 @@ private fun CategoryBreakdownCard(
                     Text(
                         cat.name,
                         fontSize = 11.sp,
-                        color = Color(0xFF374151),
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.weight(1f)
                     )
                     Text(
@@ -327,7 +328,7 @@ private fun DonutChart(categories: List<CategorySummary>, total: Double, baseCol
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp)
-                    .background(Color(0xFFF1F5F9), RoundedCornerShape(4.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(4.dp))
             ) {
                 Box(
                     modifier = Modifier
