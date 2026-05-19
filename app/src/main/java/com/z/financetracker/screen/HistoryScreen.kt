@@ -790,12 +790,19 @@ private fun TappableTransactionCard(tx: Transaction, onClick: () -> Unit) {
                             )
                         }
                         Spacer(Modifier.width(8.dp))
-                        // Tap detail
-                        Column(horizontalAlignment = Alignment.End) {
-                            Icon(Icons.Default.OpenInBrowser, null,
-                                tint = Color(0xFF334155), modifier = Modifier.size(14.dp))
-                            Spacer(Modifier.height(4.dp))
-                            Text("details", fontSize = 9.sp, color = Color(0xFF334155))
+                        // Tap detail button
+                        Column(
+                            horizontalAlignment = Alignment.End,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .clickable { onClick() }
+                                .padding(6.dp)
+                        ) {
+                            Icon(Icons.Default.OpenInNew, null,
+                                tint = Color(0xFF94A3B8), modifier = Modifier.size(18.dp))
+                            Spacer(Modifier.height(2.dp))
+                            Text("Detail", fontSize = 9.sp, color = Color(0xFF94A3B8),
+                                fontWeight = FontWeight.SemiBold)
                         }
                     }
                 }
